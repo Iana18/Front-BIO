@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plataforma de Denúncias - Modelo</title>
+
+  <!-- Fontes e Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/denuncia.css">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+  <!-- Barra de Navegação -->
+  <header class="main-nav">
+    <div class="container flex-container">
+      <div class="logo">
+        <i class="fas fa-paw"></i>
+        <span>BIO-GUINÉ</span>
+      </div>
+      <nav class="main-nav-links">
+        <a href="index.html">Home</a>
+        <a href="cadastro.html">Listas de espécies</a>
+        <a href="denuncia.html">Listas de denúncias</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero-denuncia">
+    <div class="hero-denuncia-content">
+      <h1>Bio-Guiné</h1>
+      <p>Ajude a conservar a biodiversidade enviando denúncias detalhadas.</p>
+      <a class="fale" href="#">Fale conosco</a>
+    </div>
+  </section>
+
+  <br><br><br><br><br>
+
+  <!-- Botão para mostrar formulário -->
+  <button id="btnMostrarForm" class="btn btn-success mb-3">Fazer Denúncia</button>
+
+  <!-- Formulário escondido inicialmente -->
+  <form id="serForm" enctype="multipart/form-data" style="display:none; position: relative;">
+    <h1>Faça a sua denuncia</h1>
+    <!-- Botão X (fechar) -->
+<button type="button" id="btnFecharForm" 
+        style="position: absolute; top: 10px; right: 10px; 
+               background: transparent; border: none; 
+               font-size: 22px; cursor: pointer; 
+               z-index: 9999;">
+  ✖
+</button>
+
+    <div class="form-row">
+      <!-- Coluna esquerda -->
+      <div class="form-col form-left">
+        <div class="mb-3">
+          <label for="titulo" class="form-label">Título da Denúncia</label>
+          <input type="text" id="titulo" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+          <label for="descricao" class="form-label">Descrição</label>
+          <textarea id="descricao" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="especieId" class="form-label">Espécie</label>
+          <select id="especieId" class="form-control">
+            <option value="">Selecione a espécie</option>
+          </select>
+        </div>
+
+        <!-- Upload -->
+        <div class="mb-3">
+          <label class="form-label">Imagem</label>
+          <div class="d-flex gap-2">
+            <button type="button" id="btnTirarFoto" class="btn btn-outline-primary">Tirar Foto</button>
+            <button type="button" id="btnEscolherGaleria" class="btn btn-outline-secondary">Escolher da Galeria</button>
+          </div>
+          <input type="file" id="imagem" accept="image/*" style="display:none;">
+          <img id="previewImagem" src="" alt="Preview da Imagem" style="display:none; max-width: 50%; margin-top: 10px;">
+        </div>
+      </div>
+
+      <!-- Coluna direita: mapa -->
+      <div class="form-col form-right">
+        <div id="map" style="height:300px;"></div>
+        <input type="hidden" id="latitude" name="latitude">
+        <input type="hidden" id="longitude" name="longitude">
+      </div>
+    </div>
+
+    <!-- Botão enviar -->
+    <button type="submit" class="btn btn-primary mt-3 btn-full">Denunciar</button>
+  </form>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="assets/page/denuncia.js"></script>
+</body>
+</html>

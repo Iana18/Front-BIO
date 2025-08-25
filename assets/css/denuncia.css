@@ -1,0 +1,432 @@
+/* Variáveis de cores */
+:root {
+    --cor-verde-escuro: #386b3a;
+    --cor-verde-musgo: #458748;
+    --cor-marrom-terra: #45874869;
+    --cor-bege-claro: #fafafa;
+    --cor-branco: #FFFFFF;
+    --cor-cinza-claro: #f4f4f4;
+}
+
+/* Estilos Globais */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: var(--cor-bege-claro);
+    color: var(--cor-verde-escuro);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Barra de Utilitários (Topo) */
+.top-bar {
+    background-color: transparent;
+    color: var(--cor-verde-escuro);
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: center;
+}
+
+.top-bar .container {
+    display: flex;
+    justify-content: center;
+}
+
+.top-bar-links a {
+    color: var(--cor-verde-escuro);
+    text-decoration: none;
+    margin: 0 1rem;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.top-bar-links a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* Barra de Navegação Principal */
+.main-nav {
+    background-color: var(--cor-verde-escuro);
+    color: var(--cor-branco);
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.main-nav .logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.main-nav .logo i {
+    color: var(--cor-verde-musgo);
+    font-size: 2rem;
+    margin-right: 0.5rem;
+}
+
+.main-nav .logo span {
+    color: var(--cor-branco);
+}
+
+.main-nav-links a {
+    color: var(--cor-branco);
+    text-decoration: none;
+    margin-left: 1.5rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.main-nav-links a:hover {
+    color: var(--cor-bege-claro);
+}
+
+/* Botões e info do usuário */
+.nav-buttons .btn,
+.nav-buttons .user-info {
+    background-color: var(--cor-verde-musgo);
+    border-color: var(--cor-verde-musgo);
+    color: var(--cor-branco);
+    padding: 0.5rem 1.2rem;
+    border-radius: 5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.nav-buttons .btn:hover {
+    background-color: #3f7b42;
+}
+
+.nav-buttons .user-info {
+    background-color: transparent;
+    border: 2px solid var(--cor-bege-claro);
+    color: var(--cor-bege-claro);
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+/* Hero Denúncia */
+.hero-denuncia {
+    position: relative;
+    height: 100vh;
+    color: var(--cor-branco);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-image: url('../img/Poupinha-Prionops-plumatus-scaled.jpg'); /* substitua pelo caminho da imagem */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* imagem fixa */
+    transition: none;
+}
+
+.hero-denuncia-content {
+    position: relative;
+    z-index: 1;
+  
+    padding: 2rem;
+    border-radius: 10px;
+}
+
+.hero-denuncia h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    margin-bottom: 1rem;
+}
+
+.hero-denuncia p {
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    max-width: 800px;
+    margin: 0 auto 2rem;
+}
+
+/* Botão "Fale conosco" */
+/* Botão "Fale conosco" flutuante */
+.fale {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    color: #FFFFFF; /* texto branco */
+    border: 2px solid #FFD700; /* borda amarela */
+    border-radius: 25px; /* linhas arredondadas */
+    background-color: transparent; /* fundo transparente */
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    /* Animação de flutuação */
+    animation: flutuar 3s ease-in-out infinite;
+}
+
+.fale:hover {
+    background-color: #FFD700; /* fundo amarelo no hover */
+    color: #000000; /* texto preto no hover */
+    transform: translateY(-5px); /* sobe levemente ao passar o mouse */
+}
+
+/* Keyframes para animação de flutuação */
+@keyframes flutuar {
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+/* ===================== Formulário de Cadastro de Denúncia ===================== */
+h2 {
+    color: var(--cor-verde-escuro);
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+
+/* ===================== Container do formulário ===================== */
+#serForm {
+    background-color: var(--cor-branco);
+    padding: 20px 25px;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+    max-width: 700px;
+    margin: 0 auto;
+    display: none; /* só aparece ao clicar no botão */
+    animation: fadeIn 0.6s ease-in-out;
+    position: relative;
+}
+
+/* ===================== Layout de colunas ===================== */
+.form-row {
+    display: flex;
+    gap: 40px; /* aumenta o espaço entre colunas */
+    align-items: stretch; /* colunas têm mesma altura */
+}
+
+.form-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    
+}
+
+/* ----- Coluna esquerda (inputs) ----- */
+.form-left {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* ocupa todo espaço disponível */
+}
+
+.form-left .mb-3 {
+    flex: 1; /* campos crescem uniformemente */
+    display: flex;
+    flex-direction: column;
+}
+
+.form-left input,
+.form-left textarea,
+.form-left select {
+    flex: 1;
+    width: 100%;
+}
+
+/* Textarea maior */
+#descricao {
+    min-height: 200px;
+    resize: vertical;
+}
+
+/* ----- Coluna direita (mapa) ----- */
+.form-right {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Dá mais espaço entre o X e o mapa */
+.form-right #map {
+  flex: 1;
+  min-height: 400px;
+  width: 100%;
+  margin-top: 20px; /* 🔥 esse espaço separa o mapa do topo/X */
+  border-radius: 15px;
+  border: 1px solid var(--cor-cinza-claro);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* ===================== Labels e Inputs ===================== */
+.form-label {
+    color: #000;
+    font-weight: 600;
+}
+
+.form-control,
+.form-select,
+input[type="file"] {
+    border-radius: 10px;
+    border: 1px solid var(--cor-cinza-claro);
+    background-color: var(--cor-cinza-claro);
+    padding: 10px 12px;
+    color: #000;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus,
+input[type="file"]:focus {
+    border-color: #000;
+    box-shadow: 0 0 0 0.2rem rgba(115, 183, 235, 0.537);
+    color: #000;
+}
+
+/* ===================== Botões ===================== */
+.btn-full {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.btn-primary {
+    background-color: var(--cor-verde-musgo);
+    border-color: var(--cor-verde-musgo);
+    padding: 0.7rem 1.5rem;
+    font-weight: 600;
+    border-radius: 10px;
+    color: var(--cor-branco);
+    transition: all 0.3s ease;
+}
+
+#btnFecharForm {
+  position: absolute;
+  top: 20px;   /* aumenta a distância do topo */
+  right: 20px; /* aumenta a distância da lateral */
+  background: transparent;
+  border: none;
+  font-size: 26px; /* pode aumentar um pouco o tamanho também */
+  cursor: pointer;
+  z-index: 9999; /* garante que fique acima do mapa */
+}
+
+.btn-primary:hover {
+    background-color: var(--cor-verde-escuro);
+    border-color: var(--cor-verde-escuro);
+}
+
+/* Botão de enviar denúncia */
+#serForm button[type="submit"] {
+    font-size: 1.1rem;
+    border-radius: 12px;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--cor-verde-musgo), var(--cor-verde-escuro));
+    border: none;
+    color: var(--cor-branco);
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+}
+
+#serForm button[type="submit"]:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, var(--cor-verde-escuro), #2e5330);
+}
+
+/* ===================== Botão "Fazer Denúncia" ===================== */
+#btnMostrarForm {
+    display: block;
+    margin: 30px auto;
+    background-color: var(--cor-verde-musgo);
+    border: none;
+    color: var(--cor-branco);
+    font-size: 1.1rem;
+    padding: 12px 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#btnMostrarForm:hover {
+    background-color: var(--cor-verde-escuro);
+    transform: translateY(-2px);
+}
+
+/* ===================== Upload de imagem ===================== */
+#previewImagem {
+    border-radius: 12px;
+    border: 2px dashed var(--cor-verde-musgo);
+    padding: 5px;
+    background-color: var(--cor-cinza-claro);
+    transition: all 0.3s ease;
+}
+
+#previewImagem:hover {
+    transform: scale(1.03);
+}
+
+/* Botões de foto/galeria */
+#btnTirarFoto,
+#btnEscolherGaleria {
+    flex: 1;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 12px;
+    transition: all 0.3s ease;
+}
+
+#btnTirarFoto {
+    border: 2px solid var(--cor-verde-musgo);
+    color: var(--cor-verde-musgo);
+    background-color: transparent;
+}
+
+#btnTirarFoto:hover {
+    background-color: var(--cor-verde-musgo);
+    color: var(--cor-branco);
+}
+
+#btnEscolherGaleria {
+    border: 2px solid #888;
+    color: #555;
+    background-color: transparent;
+}
+
+#btnEscolherGaleria:hover {
+    background-color: #888;
+    color: var(--cor-branco);
+}
+
+/* ===================== Espaçamentos ===================== */
+.mb-3 {
+    margin-bottom: 20px !important;
+}
+
+/* ===================== Responsividade ===================== */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-right #map {
+        min-height: 300px;
+    }
+}
+
+/* ===================== Animação ===================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,287 @@
+/* ================= Reset básico ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f2f5;
+  color: #333;
+}
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ================= Menu lateral ================= */
+.sider {
+  width: 220px;
+  background: #001529;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.sider.collapsed {
+  width: 60px;
+}
+
+.sider h2 {
+  text-align: center;
+  padding: 16px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.sider h2 i {
+  cursor: pointer;
+}
+
+.sider span {
+  transition: opacity 0.3s;
+}
+
+.sider.collapsed span {
+  display: none;
+}
+
+/* ================= Menu ================= */
+.menu-container {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu li {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  position: relative;
+}
+
+.menu li:hover > .menu-item {
+  background: #1890ff;
+}
+
+.menu li.active > .menu-item {
+  background: #096dd9;
+}
+
+.arrow {
+  margin-left: auto;
+  transition: transform 0.3s;
+}
+
+.menu li.open > .menu-item .arrow {
+  transform: rotate(90deg);
+}
+
+/* ================= Submenu ================= */
+.submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 0;
+  overflow: hidden;
+  background: #0d1a26;
+  transition: max-height 0.4s ease;
+}
+
+.submenu li {
+  padding: 10px 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.submenu li:hover {
+  background: #40a9ff;
+}
+
+.submenu.open {
+  max-height: 1000px;
+}
+
+/* ================= Botão Sair ================= */
+.logout {
+  padding: 12px 16px;
+  background: #001529;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.logout:hover {
+  background: #f5222d;
+}
+
+/* ================= Área principal ================= */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f0f2f5;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.toggle-btn {
+  font-size: 20px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.header-right:hover::after {
+  content: "Perfil";
+  position: absolute;
+  top: 36px;
+  right: 0;
+  background: #001529;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Conteúdo */
+.content {
+  flex: 1;
+  padding: 16px;
+  background: #fff;
+  overflow-x: auto;
+}
+
+.breadcrumb {
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #888;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 10px;
+  background: #f0f2f5;
+}
+
+/* ================= Tabelas ================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+table th {
+  background-color: #001529;
+  color: white;
+}
+
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table tr:hover {
+  background-color: #ddd;
+}
+
+table button {
+  padding: 4px 8px;
+  margin-right: 4px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+table button:first-child {
+  background-color: #1890ff;
+}
+
+table button:nth-child(2) {
+  background-color: #52c41a;
+}
+
+table button:last-child {
+  background-color: #f5222d;
+}
+
+/* ================= Animações ================= */
+#main-content {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+#main-content.fade-out {
+  opacity: 0;
+}
+
+#main-content.fade-in {
+  opacity: 1;
+}
+
+/* ================= Responsividade ================= */
+@media (max-width: 768px) {
+  .sider {
+    position: absolute;
+    left: -220px;
+    top: 0;
+    height: 100%;
+    z-index: 1000;
+  }
+
+  .sider.open {
+    left: 0;
+  }
+
+  .layout {
+    flex-direction: column;
+  }
+}

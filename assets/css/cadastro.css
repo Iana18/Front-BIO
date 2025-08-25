@@ -1,0 +1,388 @@
+ #map { height: 400px; margin-bottom: 20px; }
+
+ /* Variáveis de cores */
+:root {
+    --cor-verde-escuro: #386b3a;
+    --cor-verde-musgo: #458748;
+    --cor-marrom-terra: #45874869;
+    --cor-bege-claro: #fafafa;
+    --cor-branco: #FFFFFF;
+    --cor-cinza-claro: #f4f4f4;
+}
+
+/* Estilos Globais */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: var(--cor-bege-claro);
+    color: var(--cor-verde-escuro);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Barra de Utilitários (Topo) */
+.top-bar {
+    background-color: transparent;
+    color: var(--cor-verde-escuro);
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: center;
+}
+
+.top-bar .container {
+    display: flex;
+    justify-content: center;
+}
+
+.top-bar-links a {
+    color: var(--cor-verde-escuro);
+    text-decoration: none;
+    margin: 0 1rem;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.top-bar-links a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* Barra de Navegação Principal */
+.main-nav {
+    background-color: var(--cor-verde-escuro);
+    color: var(--cor-branco);
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.main-nav .logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.main-nav .logo i {
+    color: var(--cor-verde-musgo);
+    font-size: 2rem;
+    margin-right: 0.5rem;
+}
+
+.main-nav .logo span {
+    color: var(--cor-branco);
+}
+
+.main-nav-links a {
+    color: var(--cor-branco);
+    text-decoration: none;
+    margin-left: 1.5rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.main-nav-links a:hover {
+    color: var(--cor-bege-claro);
+}
+
+/* Botões e info do usuário */
+.nav-buttons .btn,
+.nav-buttons .user-info {
+    background-color: var(--cor-verde-musgo);
+    border-color: var(--cor-verde-musgo);
+    color: var(--cor-branco);
+    padding: 0.5rem 1.2rem;
+    border-radius: 5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.nav-buttons .btn:hover {
+    background-color: #3f7b42;
+}
+
+.nav-buttons .user-info {
+    background-color: transparent;
+    border: 2px solid var(--cor-bege-claro);
+    color: var(--cor-bege-claro);
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+/* Hero Denúncia */
+.hero-denuncia {
+    position: relative;
+    height: 100vh;
+    color: var(--cor-branco);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-image: url('../img/Poupinha-Prionops-plumatus-scaled.jpg'); /* substitua pelo caminho da imagem */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* imagem fixa */
+    transition: none;
+}
+
+.hero-denuncia-content {
+    position: relative;
+    z-index: 1;
+  
+    padding: 2rem;
+    border-radius: 10px;
+}
+
+.hero-denuncia h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    margin-bottom: 1rem;
+}
+
+.hero-denuncia p {
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    max-width: 800px;
+    margin: 0 auto 2rem;
+}
+
+/* Botão "Fale conosco" */
+/* Botão "Fale conosco" flutuante */
+.fale {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    color: #FFFFFF; /* texto branco */
+    border: 2px solid #FFD700; /* borda amarela */
+    border-radius: 25px; /* linhas arredondadas */
+    background-color: transparent; /* fundo transparente */
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    /* Animação de flutuação */
+    animation: flutuar 3s ease-in-out infinite;
+}
+
+.fale:hover {
+    background-color: #FFD700; /* fundo amarelo no hover */
+    color: #000000; /* texto preto no hover */
+    transform: translateY(-5px); /* sobe levemente ao passar o mouse */
+}
+
+/* Keyframes para animação de flutuação */
+@keyframes flutuar {
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+
+/* Formulário de Cadastro de Seres */
+/* ----------------- Formulário de Cadastro de Seres ----------------- */
+h2 {
+    color: var(--cor-verde-escuro);
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+#serForm {
+    background-color: var(--cor-branco);
+    padding: 20px 25px;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+    max-width: 1000px;
+    margin: 0 auto;
+ 
+}
+
+/* Layout de colunas */
+.form-row {
+    display: flex;
+    gap: 20px;
+    align-items: stretch; /* Colunas têm mesma altura */
+}
+
+.form-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-left {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Mapa na coluna direita */
+.form-right {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-right #map {
+    flex: 1; /* Ocupa toda a altura da coluna */
+    min-height: 1000px; /* Altura mínima padrão */
+    width: 100%; /* Largura total da coluna */
+    border-radius: 15px;
+    border: 1px solid var(--cor-cinza-claro);
+}
+
+/* Inputs e selects */
+.form-label {
+    color: #000;
+    font-weight: 600;
+}
+
+.form-control, .form-select, input[type="file"] {
+    border-radius: 10px;
+    border: 1px solid var(--cor-cinza-claro);
+    background-color: var(--cor-cinza-claro);
+    padding: 10px 12px;
+    color: #000;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus, input[type="file"]:focus {
+    border-color: #000;
+    box-shadow: 0 0 0 0.2rem rgba(115, 183, 235, 0.537);
+    color: #000;
+}
+
+/* Botão ocupa toda largura */
+.btn-full {
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Botão de cadastro */
+.btn-primary {
+    background-color: var(--cor-verde-musgo);
+    border-color: var(--cor-verde-musgo);
+    padding: 0.7rem 1.5rem;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    color: var(--cor-branco);
+}
+
+.btn-primary:hover {
+    background-color: var(--cor-verde-escuro);
+    border-color: var(--cor-verde-escuro);
+}
+
+/* Espaçamento entre campos */
+.mb-3 {
+    margin-bottom: 20px !important;
+}
+
+/* ----------------- Responsividade ----------------- */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column; /* Colunas empilhadas em mobile */
+    }
+    
+    .form-right #map {
+        min-height: 300px; /* Ajusta altura mínima para telas pequenas */
+    }
+}
+
+/* ----------------- Lista de Espécies ----------------- */
+.lista-especies {
+    background-color: #f9f9f9;
+    padding: 40px 0;
+}
+
+.lista-especies h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* ----------------- Filtros ----------------- */
+
+.filtro-especies {
+    display: flex;
+    flex-wrap: nowrap; /* Impede quebra de linha */
+    gap: 15px; /* Espaço entre os filtros */
+    justify-content: center; /* Centraliza os filtros horizontalmente */
+    margin-bottom: 30px;
+}
+
+.filtro-input,
+.filtro-select {
+    flex: 1; /* Faz cada filtro ocupar o mesmo espaço proporcional */
+    min-width: 180px; /* Garante que não fique muito pequeno */
+    max-width: 250px; /* Limita o tamanho máximo */
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.filtro-input:focus,
+.filtro-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0,123,255,0.3);
+    outline: none;
+}
+
+
+/* ----------------- Cards de Espécies ----------------- */
+#listaEspecies .card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+#listaEspecies .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+#listaEspecies .card-body {
+    padding: 20px;
+}
+
+#listaEspecies .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #222;
+}
+
+#listaEspecies .card-text {
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #555;
+}
+
+#listaEspecies .card-text strong {
+    color: #333;
+}
+
+/* ----------------- Responsividade ----------------- */
+@media (max-width: 768px) {
+    .filtro-input,
+    .filtro-select {
+        width: 100%;
+    }
+}

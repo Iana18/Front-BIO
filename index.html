@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Denúncias - Modelo</title>
+    <!-- Fontes e Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+   
+    <link rel="stylesheet" href="assets/css/index.css">
+</head>
+<body>
+
+    <!-- Barra de Navegação Principal -->
+    <header class="main-nav">
+        <div class="container flex-container">
+            <div class="logo">
+                <i class="fas fa-paw"></i>
+                <span>BIO-GUINÉ</span>
+            </div>
+            <nav class="main-nav-links">
+                <a href="index.html">Home</a>
+                <a href="cadastro.html">Listas de espécies</a>
+                <a href="denuncia.html">Listas de denúncias</a>
+                <a href="login.html">Login</a>
+            </nav>
+            <div id="nav-buttons-container" class="nav-buttons">
+                <!-- Conteúdo dinâmico inserido pelo script -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Barra de Utilitários (Topo) -->
+    <div class="top-bar">
+        <div class="container top-bar-links">
+            <a href="#">Blog</a>
+            <a href="#">Notícia</a>
+            <a href="#">Quiz</a>
+            <a href="#">Sobre</a>
+            <a href="#">Contacto</a>
+        </div>
+    </div>
+    
+    <!-- Conteúdo Principal -->
+    <main>
+        <!-- Seção Hero (Banner) -->
+        <section class="hero-denuncia">
+            <div class="hero-denuncia-content">
+                <h1>Bio-Guiné</h1>
+                <p>Ajude a conservar a biodiversidade enviando denúncias detalhadas.</p>
+                <a class="fale" href="#">Fale conosco</a>
+            </div>
+        </section>
+        <br><br>
+
+        <!-- Seção de Missão -->
+        <section id="missao" class="content-section">
+            <div class="container">
+                <h1>Ajude na preservação do meio ambiente com simple cliques</h1>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Velit explicabo voluptatem, laudantium,</p>
+                <div class="mission-cards">
+                    <div class="mission-card">
+                        <img src="assets/img/Tartaruga-verde.jpeg" alt="">
+                        <h3>Tire uma foto</h3>
+                        <p>Documente o que você viu. Uma imagem detalhada pode ajudar a identificar a espécie e a situação.</p>
+                    </div>
+                    <div class="mission-card middle-carde">
+                        <img src="assets/img/Tartaruga-verde.jpeg" alt="">
+                        <h3>Adicione informações</h3>
+                        <p>Forneça o máximo de detalhes possível, como a data, a hora e uma descrição do que aconteceu.</p>
+                    </div>
+                    <div class="mission-card middle-carder">
+                        <img src="assets/img/Tartaruga-verde.jpeg" alt="">
+                        <h3>Envie a denúncia</h3>
+                        <p>Após documentar e informar todos os detalhes, envie sua denúncia para que seja analisada.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Texto Flutuante -->
+<section class="destaque-especie">
+  <div class="imagem-especie">
+    <img src="assets/img/Tartaruga-verde.jpeg" alt="Tartaruga-cabeçuda">
+  </div>
+  <div class="info-especie">
+    <h2>Tartaruga-verde</h2>
+    <h4><em>Caretta caretta</em></h4>
+    <p><strong>Status:</strong> Ameaçada</p>
+    <p>
+      Esta espécie de tartaruga marinha é conhecida por sua cabeça grande e forte. Habita águas tropicais e subtropicais e está ameaçada devido à pesca predatória, destruição de habitat e poluição marinha.
+    </p>
+   
+  </div>
+</section>
+
+
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Plataforma de Denúncias. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="assets/page/index.js"></script>
+</body>
+</html>

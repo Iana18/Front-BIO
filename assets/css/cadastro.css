@@ -386,3 +386,38 @@ h2 {
         width: 100%;
     }
 }
+
+/* Cards estilo Pinterest dentro do Bootstrap */
+.pinterest-card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+    background: #fff;
+}
+
+.pinterest-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.pinterest-card img {
+    width: 100%;
+    height: 250px; /* altura consistente */
+    object-fit: cover;
+}
+
+.pinterest-card .card-body {
+    padding: 15px;
+}
+
+.pinterest-card .card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.pinterest-card p {
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}

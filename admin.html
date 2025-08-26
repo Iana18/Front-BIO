@@ -53,6 +53,9 @@
             <li onclick="loadContent('Espécies', this)"><i class="fas fa-paw"></i> <span>Espécies</span></li>
             <li onclick="loadContent('Categorias', this)"><i class="fas fa-list"></i> <span>Categorias</span></li>
             <li onclick="loadContent('Tipos', this)"><i class="fas fa-tags"></i> <span>Tipos</span></li>
+            <li onclick="loadContent('Quiz', this)"><i class="fas fa-question-circle"></i> <span>Quiz</span></li>
+            <li onclick="loadContent('Perguntas', this)"><i class="fas fa-question-circle"></i> <span>Perguntas</span></li>
+            <li onclick="loadContent('Respostas', this)"><i class="fas fa-check-circle"></i> <span>Respostas</span></li>
           </ul>
         </li>
       </ul>
@@ -90,12 +93,6 @@
     <p class="user-login"></p>
     <p class="user-email"></p>
   </div>
-</div>
-<div id="modal-detalhes" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); justify-content:center; align-items:center;">
-    <div id="modal-content" style="background:#fff; padding:20px; max-width:600px; width:90%; max-height:90%; overflow:auto; position:relative; border-radius:10px;">
-        <button id="close-modal" style="position:absolute; top:10px; right:10px;">Fechar</button>
-        <div id="modal-body"></div>
-    </div>
 </div>
 
 
@@ -151,6 +148,9 @@ else if (name === "Denúncias") fetchDenuncias();
 else if (name === "Espécies") fetchEspecies();
 else if (name === "Categorias") fetchCategorias();
 else if (name === "Tipos") fetchTipos();
+else if (name === "Quiz")fetchQuiz();
+else if (name === "Perguntas")fetchPerguntas();
+else if (name === "Respostas")fetchRespostas();
 else content.innerHTML = `<h2>${name}</h2><p>Conteúdo em construção...</p>`;
 }
 
@@ -161,6 +161,10 @@ function fetchDenuncias() { console.log("Buscando Denúncias..."); }
 function fetchEspecies() { console.log("Buscando Espécies...");}
 function fetchCategorias() {console.log("Buscando Categorias...");}
 function fetchTipos() {console.log("Buscando Tipos...");}
+function fetchQuiz() {console.log("Buscando Quiz...");}
+function fetchPerguntas() {console.log("Buscando Perguntas...");}
+function fetchRespostas() {console.log("Buscando Respostas...");}
+
 
 </script>
 <script src="assets/page/adim.js"></script>

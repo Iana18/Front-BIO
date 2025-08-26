@@ -193,3 +193,105 @@ function cadastrar(event) {
 
     xhr.send(formData);
 }
+
+
+window.locationCache = {};
+
+async function listarSeres() {
+    const listaContainer = document.getElementById("listaEspecies");
+    listaContainer.innerHTML = ""; // limpa
+
+    try {
+        const res = await fetch("http://localhost:8080/api/seres");
+        const data = await res.json();
+
+        const seresAprovados = data.filter(ser => ser.statusAprovacao === "APROVADO");
+
+        if (seresAprovados.length === 0) {
+            listaContainer.innerHTML = "<p>Nenhum ser aprovado cadastrado ainda.</p>";
+            return;
+        }
+
+        for (const ser of seresAprovados) {
+            // Imagem do ser
+            let imagemSrc = 'assets/images/default.png';
+            try {
+                const imgRes = await fetch(`http://localhost:8080/api/seres/${ser.id}/imagem`);
+                if (imgRes.ok) {
+                    const base64 = await imgRes.text();
+                    if (base64) imagemSrc = `data:image/jpeg;base64,${base64}`;
+                }
+            } catch {}
+
+            // Localização
+            let locationName = "—";
+            if (window.locationCache[ser.id]) {
+                locationName = window.locationCache[ser.id];
+            } else if (ser.latitude && ser.longitude) {
+                try {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${ser.latitude}&lon=${ser.longitude}&format=json`);
+                    const locationData = await response.json();
+                    locationName = locationData.display_name || "—";
+                    window.locationCache[ser.id] = locationName;
+                } catch {}
+            }
+
+            // Ícone do status de conservação
+            // Ícone ou avatar para status de conservação
+            let statusIcon = '';
+            switch (ser.statusConservacao) {
+                case "EM_PERIGO":
+                    statusIcon = '<i class="bi bi-exclamation-triangle-fill text-danger"></i>';
+                    break;
+                case "VULNERAVEL":
+                    statusIcon = '<i class="bi bi-exclamation-circle-fill text-warning"></i>';
+                    break;
+                case "POUCO_PREOCUPANTE":
+                    statusIcon = '<i class="bi bi-check-circle-fill text-success"></i>';
+                    break;
+                default:
+                    statusIcon = '<i class="bi bi-question-circle-fill text-secondary"></i>';
+            }
+
+            const col = document.createElement("div");
+            col.className = "col";
+
+            col.innerHTML = `
+                <div class="card h-100 pinterest-card">
+                    <img src="${imagemSrc}" class="card-img-top" alt="${ser.nomeComum}">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">${ser.nomeComum} <small class="text-muted">(${ser.nomeCientifico})</small></h5>
+                        <p class="mb-1">
+                            <i class="bi bi-bookmark-fill text-primary me-1"></i>
+                            ${ser.especie ? ser.especie.nome : "—"}
+                        </p>
+                        <p class="mb-1">
+                            ${statusIcon}
+                            ${ser.statusConservacao || "—"}
+                        </p>
+                        <p class="mb-1">
+                            <i class="bi bi-person-circle me-1"></i>
+                            ${ser.registradoPor ? ser.registradoPor.login : "—"}
+                        </p>
+                        <p class="mb-2"><i class="bi bi-geo-alt-fill text-danger me-1"></i> ${locationName}</p>
+                      <a href=seresDetalhes.html"?id=${ser.id}" class="btn btn-sm btn-success mt-auto text-center">Ver Mais</a>
+
+                    </div>
+                </div>
+            `;
+
+            listaContainer.appendChild(col);
+        }
+
+    } catch (err) {
+        console.error(err);
+        listaContainer.innerHTML = "<p class='text-danger'>Erro ao carregar seres.</p>";
+    }
+}
+
+// Função do botão "Ver Mais"
+function verMais(serId) {
+    alert(`Ver mais informações do ser com ID: ${serId}`);
+}
+
+window.addEventListener("DOMContentLoaded", listarSeres);

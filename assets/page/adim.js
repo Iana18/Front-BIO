@@ -51,94 +51,94 @@ function fetchUsuarios() {
 // ========================== INICIO SERES ==================================================================================================================
 
 // ---------------------------- Inicialização ----------------------------
+// ---------------------------- Cache global ----------------------------
+window.seresCache = [];
+window.especiesCache = [];
+
 // ---------------------------- Inicialização ----------------------------
 async function fetchSeres() {
     try {
-        // Buscar seres
         const resSeres = await fetch("http://localhost:8080/api/seres");
         const seres = await resSeres.json();
         window.seresCache = seres;
 
-        // Buscar espécies
         const resEspecies = await fetch("http://localhost:8080/api/especies");
         const especies = await resEspecies.json();
         window.especiesCache = especies;
 
-        const html = `
-            <h2>Seres</h2>
-            <div style="margin-bottom:10px; display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
-                <input type="text" id="search-nome" placeholder="Nome comum ou científico" style="padding:5px; width:200px;">
-                <select id="search-especie" style="padding:5px; width:150px;">
-                    <option value="">Espécie</option>
-                    ${especies.map(es => `<option value="${es.nome}">${es.nome}</option>`).join('')}
-                </select>
-                <select id="search-status-aprovacao" style="padding:5px;">
-                    <option value="">Status Aprovação</option>
-                    <option value="PENDENTE">Pendente</option>
-                    <option value="APROVADO">Aprovado</option>
-                    <option value="REJEITADA">Rejeitada</option>
-                    <option value="RESOLVIDA">Resolvida</option>
-                    <option value="NAO_RESOLVIDA">Não resolvida</option>
-                </select>
-                <select id="search-status-conservacao" style="padding:5px;">
-                    <option value="">Status Conservação</option>
-                    <option value="CRITICAMENTE_EM_PERIGO">Criticamente em perigo</option>
-                    <option value="EM_PERIGO">Em perigo</option>
-                    <option value="VULNERAVEL">Vulnerável</option>
-                    <option value="QUASE_AMEAÇADO">Quase ameaçado</option>
-                    <option value="LEAST_CONCERN">Menor preocupação</option>
-                </select>
-            </div>
-
-            <table id="seres-table" border="1" cellspacing="0" cellpadding="5" style="width:100%; border-collapse:collapse;">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome Comum</th>
-                        <th>Nome Científico</th>
-                        <th>Descrição</th>
-                        <th>Status Aprovação</th>
-                        <th>Status Conservação</th>
-                        <th>Categoria</th>
-                        <th>Espécie</th>
-                        <th>Tipo</th>
-                        <th>Registrado Por</th>
-                        <th>Detalhes</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-
-            <div id="modal-detalhes" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); justify-content:center; align-items:center;">
-                <div id="modal-content" style="background:#fff; padding:20px; max-width:600px; width:90%; max-height:90%; overflow:auto; position:relative; border-radius:10px;">
-                    <button id="close-modal" style="position:absolute; top:10px; right:10px;">Fechar</button>
-                    <div id="modal-body"></div>
-                </div>
-            </div>
-        `;
-
-        document.getElementById("main-content").innerHTML = html;
-
-        // Eventos de filtro reativo
-        document.getElementById("search-nome").oninput = filtrarSeres;
-        document.getElementById("search-especie").onchange = filtrarSeres;
-        document.getElementById("search-status-aprovacao").onchange = filtrarSeres;
-        document.getElementById("search-status-conservacao").onchange = filtrarSeres;
-
-        mostrarSeres(seres);
+        renderTabelaSeres(seres, especies);
     } catch (err) {
         console.error("Erro ao buscar seres ou espécies:", err);
+        alert("Erro ao buscar seres ou espécies");
     }
 }
 
-// ---------------------------- Mostrar seres em tabela ----------------------------
-async function mostrarSeres(seres) {
-    const tbody = document.querySelector("#seres-table tbody");
+// ---------------------------- Renderizar tabela ----------------------------
+function renderTabelaSeres(seres, especies) {
+    const content = document.getElementById("main-content");
+
+    const html = `
+        <h2>Seres</h2>
+        <div style="margin-bottom:10px; display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
+            <input type="text" id="search-nome" placeholder="Nome comum ou científico" style="padding:5px; width:200px;">
+            <select id="search-especie" style="padding:5px; width:150px;">
+                <option value="">Espécie</option>
+                ${especies.map(es => `<option value="${es.nome}">${es.nome}</option>`).join('')}
+            </select>
+            <select id="search-status-aprovacao" style="padding:5px;">
+                <option value="">Status Aprovação</option>
+                <option value="PENDENTE">Pendente</option>
+                <option value="APROVADO">Aprovado</option>
+                <option value="REJEITADA">Rejeitada</option>
+                <option value="RESOLVIDA">Resolvida</option>
+                <option value="NAO_RESOLVIDA">Não resolvida</option>
+            </select>
+            <select id="search-status-conservacao" style="padding:5px;">
+                <option value="">Status Conservação</option>
+                <option value="CRITICAMENTE_EM_PERIGO">Criticamente em perigo</option>
+                <option value="EM_PERIGO">Em perigo</option>
+                <option value="VULNERAVEL">Vulnerável</option>
+                <option value="QUASE_AMEAÇADO">Quase ameaçado</option>
+                <option value="LEAST_CONCERN">Menor preocupação</option>
+            </select>
+        </div>
+        <table id="tabela-seres" border="1" style="width:100%; border-collapse:collapse; margin-top:10px;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome Comum</th>
+                    <th>Nome Científico</th>
+                    <th>Descrição</th>
+                    <th>Status Aprovação</th>
+                    <th>Status Conservação</th>
+                    <th>Categoria</th>
+                    <th>Espécie</th>
+                    <th>Tipo</th>
+                    <th>Registrado Por</th>
+                    <th>Detalhes</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-seres-body"></tbody>
+        </table>
+    `;
+    content.innerHTML = html;
+
+    // Eventos de filtro
+    document.getElementById("search-nome").oninput = filtrarSeres;
+    document.getElementById("search-especie").onchange = filtrarSeres;
+    document.getElementById("search-status-aprovacao").onchange = filtrarSeres;
+    document.getElementById("search-status-conservacao").onchange = filtrarSeres;
+
+    mostrarSeres(seres);
+}
+
+// ---------------------------- Mostrar seres ----------------------------
+function mostrarSeres(seres) {
+    const tbody = document.getElementById("tabela-seres-body");
     tbody.innerHTML = "";
 
-    for (let e of seres) {
+    seres.forEach(e => {
         const tr = document.createElement("tr");
-
         tr.innerHTML = `
             <td>${e.id}</td>
             <td>${e.nomeComum}</td>
@@ -149,103 +149,166 @@ async function mostrarSeres(seres) {
             <td>${e.categoria ? e.categoria.nome : "—"}</td>
             <td>${e.especie ? e.especie.nome : "—"}</td>
             <td>${e.tipo ? e.tipo.nome : "—"}</td>
+            
             <td>${e.registradoPor ? `${e.registradoPor.login} (${e.registradoPor.nomeCompleto})` : "—"}</td>
-            <td><button onclick="abrirDetalhes(${e.id})">🔍</button></td>
+            <td><button onclick="abrirDetalhesSer(${e.id})"><i class="fas fa-eye"></i></button></td>
         `;
         tbody.appendChild(tr);
-    }
+    });
 }
 
-// ---------------------------- Abrir modal detalhes ----------------------------
-async function abrirDetalhes(id) {
-    const ser = window.seresCache.find(s => s.id === id);
+// ---------------------------- Filtro em tempo real ----------------------------
+function filtrarSeres() {
+    const nome = document.getElementById("search-nome").value.toLowerCase();
+    const especie = document.getElementById("search-especie").value;
+    const statusAprovacao = document.getElementById("search-status-aprovacao").value;
+    const statusConservacao = document.getElementById("search-status-conservacao").value;
+
+    const seresFiltrados = window.seresCache.filter(s => {
+        return (!nome || s.nomeComum.toLowerCase().includes(nome) || s.nomeCientifico.toLowerCase().includes(nome)) &&
+               (!especie || (s.especie && s.especie.nome === especie)) &&
+               (!statusAprovacao || s.statusAprovacao === statusAprovacao) &&
+               (!statusConservacao || s.statusConservacao === statusConservacao);
+    });
+
+    mostrarSeres(seresFiltrados);
+}
+
+// ---------------------------- Modal Detalhes ----------------------------
+// ---------------------------- Modal de detalhes (Seres) ----------------------------
+async function abrirDetalhesSer(serId) {
+    const ser = window.seresCache.find(s => s.id === serId);
     if (!ser) return;
 
+    const modalContainer = document.getElementById("modal-container");
+    modalContainer.innerHTML = ""; // Limpa modal anterior
+
+    // === Overlay ===
+    const overlay = document.createElement("div");
+    overlay.id = "overlay-ser";
+    Object.assign(overlay.style, {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        background: "rgba(0,0,0,0.5)",
+        zIndex: 999
+    });
+    overlay.onclick = fecharDetalhesSer;
+
+    // === Modal principal ===
+    const modal = document.createElement("div");
+    modal.id = "detalhes-ser";
+    Object.assign(modal.style, {
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        background: "#fefefe",
+        padding: "25px",
+        borderRadius: "12px",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
+        zIndex: 1000,
+        width: "650px",
+        maxHeight: "90%",
+        overflowY: "auto"
+    });
+
+    // === Cabeçalho ===
+    const h3 = document.createElement("h3");
+    h3.textContent = `Detalhes Ser #${ser.id}`;
+    modal.appendChild(h3);
+
+    // === Conteúdo ===
+    const contentWrapper = document.createElement("div");
+    Object.assign(contentWrapper.style, { display: "flex", gap: "20px" });
+
+    // Imagem
+    const imgDiv = document.createElement("div");
+    imgDiv.style.flex = "0 0 300px";
     let imagemSrc = "";
     try {
-        const imgRes = await fetch(`http://localhost:8080/api/seres/${id}/imagem`);
+        const imgRes = await fetch(`http://localhost:8080/api/seres/${serId}/imagem`);
         if (imgRes.ok) {
             const base64 = await imgRes.text();
             if (base64) imagemSrc = `data:image/jpeg;base64,${base64}`;
         }
-    } catch { imagemSrc = ""; }
+    } catch {}
+    imgDiv.innerHTML = imagemSrc 
+        ? `<img src="${imagemSrc}" style="width:100%; border-radius:8px; object-fit:cover;">`
+        : "Sem imagem";
 
-    const modalBody = document.getElementById("modal-body");
-    modalBody.innerHTML = `
-        ${imagemSrc ? `<img src="${imagemSrc}" style="width:100%; max-height:200px; object-fit:cover; border-radius:8px; margin-bottom:10px;">` : ''}
-        <p><strong>ID:</strong> ${ser.id}</p>
-        <p><strong>Nome Comum:</strong> ${ser.nomeComum}</p>
-        <p><strong>Nome Científico:</strong> ${ser.nomeCientifico}</p>
-        <p><strong>Descrição:</strong> ${ser.descricao}</p>
-        <p><strong>Status Aprovação:</strong> ${ser.statusAprovacao}</p>
-        <p><strong>Status Conservação:</strong> ${ser.statusConservacao}</p>
-        <p><strong>Categoria:</strong> ${ser.categoria ? ser.categoria.nome : "—"}</p>
-        <p><strong>Espécie:</strong> ${ser.especie ? ser.especie.nome : "—"}</p>
-        <p><strong>Tipo:</strong> ${ser.tipo ? ser.tipo.nome : "—"}</p>
-        <p><strong>Aprovado Por:</strong> ${ser.aprovadoPor ? `${ser.aprovadoPor.login} (${ser.aprovadoPor.nomeCompleto})` : "—"}</p>
-        <p><strong>Registrado Por:</strong> ${ser.registradoPor ? `${ser.registradoPor.login} (${ser.registradoPor.nomeCompleto})` : "—"}</p>
-        <p><strong>Data Registro:</strong> ${ser.dataRegistro || "—"}</p>
-        <p><strong>Data Aprovação:</strong> ${ser.dataAprovacao || "—"}</p>
-        <p><strong>Latitude:</strong> ${ser.latitude || "—"}</p>
-        <p><strong>Longitude:</strong> ${ser.longitude || "—"}</p>
-        <p><strong>Localização:</strong> ${ser.localizacao || "—"}</p>
-        <div style="margin-top:10px;">
-            <button onclick="aprovarSer(${id})">Aprovar</button>
-            <button onclick="deletarSer(${id})">Deletar</button>
-            <button onclick="atualizarSerModal(${id})">Atualizar</button>
-        </div>
-    `;
+    // Detalhes texto
+    const detailsDiv = document.createElement("div");
+    Object.assign(detailsDiv.style, { flex: "1", display: "flex", flexDirection: "column", gap: "8px" });
 
-    const modal = document.getElementById("modal-detalhes");
-    modal.style.display = "flex";
+    const info = [
+        ["Nome Comum", ser.nomeComum],
+        ["Nome Científico", ser.nomeCientifico],
+        ["Descrição", ser.descricao],
+        ["Status Aprovação", ser.statusAprovacao],
+        ["Status Conservação", ser.statusConservacao],
+        ["Categoria", ser.categoria ? ser.categoria.nome : "—"],
+        ["Espécie", ser.especie ? ser.especie.nome : "—"],
+        ["Tipo", ser.tipo ? ser.tipo.nome : "—"],
+        ["Registrado Por", ser.registradoPor ? `${ser.registradoPor.login} (${ser.registradoPor.nomeCompleto})` : "—"],
+        ["Aprovado Por", ser.aprovadoPor ? `${ser.aprovadoPor.login} (${ser.aprovadoPor.nomeCompleto})` : "—"],
+        ["Data Registro", ser.dataRegistro || "—"],
+        ["Data Aprovação", ser.dataAprovacao || "—"],
+        ["Latitude", ser.latitude || "—"],
+        ["Longitude", ser.longitude || "—"],
+        ["Localização", ser.latitude && ser.longitude ? `Lat: ${ser.latitude}, Lon: ${ser.longitude}` : "—"]
+    ];
 
-    document.getElementById("close-modal").onclick = () => modal.style.display = "none";
-}
-
-// ---------------------------- Funções de ação do modal ----------------------------
-async function aprovarSer(id) {
-    await fetch(`http://localhost:8080/api/seres/${id}/aprovar?usuarioLogin=admin&usuarioEmail=admin@example.com`, { method: "POST" });
-    alert("Ser aprovado!");
-    fetchSeres();
-    document.getElementById("modal-detalhes").style.display = "none";
-}
-
-async function deletarSer(id) {
-    if (!confirm("Deseja realmente deletar este ser?")) return;
-    await fetch(`http://localhost:8080/api/seres/${id}?usuarioLogin=admin&usuarioEmail=admin@example.com`, { method: "DELETE" });
-    alert("Ser deletado!");
-    fetchSeres();
-    document.getElementById("modal-detalhes").style.display = "none";
-}
-
-function atualizarSerModal(id) {
-    alert("Implementar formulário de atualização para o ser " + id);
-}
-
-// ---------------------------- Filtrar reativo ----------------------------
-async function filtrarSeres() {
-    const nome = document.getElementById("search-nome").value.toLowerCase();
-    const especie = document.getElementById("search-especie").value.toLowerCase();
-    const statusAprovacao = document.getElementById("search-status-aprovacao").value.toLowerCase();
-    const statusConservacao = document.getElementById("search-status-conservacao").value.toLowerCase();
-
-    const filtrados = window.seresCache.filter(s => {
-        const nomeMatch = s.nomeComum.toLowerCase().includes(nome) || s.nomeCientifico.toLowerCase().includes(nome);
-        const especieMatch = !especie || (s.especie && s.especie.nome.toLowerCase() === especie);
-        const aprovacaoMatch = !statusAprovacao || s.statusAprovacao.toLowerCase() === statusAprovacao;
-        const conservacaoMatch = !statusConservacao || s.statusConservacao.toLowerCase() === statusConservacao;
-        return nomeMatch && especieMatch && aprovacaoMatch && conservacaoMatch;
+    info.forEach(([label, value]) => {
+        const p = document.createElement("p");
+        p.innerHTML = `<strong>${label}:</strong> ${value}`;
+        detailsDiv.appendChild(p);
     });
 
-    mostrarSeres(filtrados);
+    contentWrapper.appendChild(imgDiv);
+    contentWrapper.appendChild(detailsDiv);
+    modal.appendChild(contentWrapper);
+
+    // === Botões de ação ===
+    const btnDiv = document.createElement("div");
+    Object.assign(btnDiv.style, { marginTop: "15px", display: "flex", gap: "10px", justifyContent: "flex-end" });
+
+    const criarBotao = (texto, acao, cor="#4CAF50") => {
+        const btn = document.createElement("button");
+        btn.textContent = texto;
+        Object.assign(btn.style, {
+            padding: "8px 15px",
+            border: "none",
+            borderRadius: "6px",
+            background: cor,
+            color: "#fff",
+            cursor: "pointer"
+        });
+        btn.onclick = acao;
+        return btn;
+    };
+
+    btnDiv.appendChild(criarBotao("Aprovar", () => aprovarSer(serId)));
+    btnDiv.appendChild(criarBotao("Deletar", () => deletarSer(serId), "#f44336"));
+    btnDiv.appendChild(criarBotao("Atualizar", () => atualizarSer(serId), "#2196F3"));
+    btnDiv.appendChild(criarBotao("Fechar", fecharDetalhesSer, "#888"));
+
+    modal.appendChild(btnDiv);
+
+    // === Adicionar overlay e modal ao container ===
+    modalContainer.appendChild(overlay);
+    modalContainer.appendChild(modal);
 }
 
-// ---------------------------- Inicializar ----------------------------
-fetchSeres();
+function fecharDetalhesSer() {
+    const modalContainer = document.getElementById("modal-container");
+    modalContainer.innerHTML = "";
+}
 
-// ========================== FIM SERES ==================================================================================================================
-
-
+// Inicialização
+// fetchSeres(); // agora é chamado via loadContent('Seres') no menu
 
 
 // ========================== INICIO DENUNCIA==================================================================================================================
@@ -413,37 +476,115 @@ function abrirDetalhes(denunciaId) {
     if (!d) return;
 
     const modalContainer = document.getElementById("modal-container");
-    modalContainer.innerHTML = `
-        <div id="overlay-denuncia" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;"></div>
-        <div id="detalhes-denuncia" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fefefe;padding:25px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.3);z-index:1000;width:650px;max-height:90%;overflow-y:auto;">
-            <h3>Detalhes Denúncia #${d.id}</h3>
-            <div style="display:flex; gap:20px;">
-                <div style="flex:0 0 300px;">
-                    ${d.imagem ? `<img src="data:image/jpeg;base64,${d.imagem}" style="width:100%;border-radius:8px;object-fit:cover;">` : "Sem imagem"}
-                </div>
-                <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
-                    <p><strong>Título:</strong> ${d.titulo}</p>
-                    <p><strong>Descrição:</strong> ${d.descricao}</p>
-                    <p><strong>Status Aprovação:</strong> ${d.statusAprovacao}</p>
-                    <p><strong>Data Denúncia:</strong> ${d.dataDenuncia ? new Date(d.dataDenuncia).toLocaleString() : "—"}</p>
-                    <p><strong>Data Aprovação:</strong> ${d.dataAprovacao ? new Date(d.dataAprovacao).toLocaleString() : "—"}</p>
-                    <p><strong>Data Resolução:</strong> ${d.dataResolucao ? new Date(d.dataResolucao).toLocaleString() : "—"}</p>
-                    <p><strong>Latitude:</strong> ${d.latitude || "—"}</p>
-                    <p><strong>Longitude:</strong> ${d.longitude || "—"}</p>
-                    <p><strong>Localização:</strong> ${d.latitude && d.longitude ? window.locationCache[d.id] || "—" : "—"}</p>
-                    <p><strong>Espécie:</strong> ${d.especie ? d.especie.nome : "Desconhecido"}</p>
-                    <p><strong>Denunciado por:</strong> ${d.denunciadoPor ? `${d.denunciadoPor.login} (${d.denunciadoPor.nomeCompleto})` : "—"}</p>
-                    <p><strong>Aprovado por:</strong> ${d.aprovadoPor ? `${d.aprovadoPor.login} (${d.aprovadoPor.nomeCompleto})` : "—"}</p>
-                </div>
-            </div>
-            <div style="text-align:right; margin-top:15px;">
-                <button onclick="fecharDetalhes()" style="padding:8px 15px; border:none; border-radius:6px; background:#4CAF50; color:#fff; cursor:pointer;">Fechar</button>
-            </div>
-        </div>
-    `;
+    modalContainer.innerHTML = ""; // limpa qualquer modal anterior
 
-    document.getElementById("overlay-denuncia").onclick = fecharDetalhes;
+    // === Overlay ===
+    const overlay = document.createElement("div");
+    overlay.id = "overlay-denuncia";
+    Object.assign(overlay.style, {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        background: "rgba(0,0,0,0.5)",
+        zIndex: 999
+    });
+    overlay.onclick = fecharDetalhes;
+
+    // === Modal principal ===
+    const modal = document.createElement("div");
+    modal.id = "detalhes-denuncia";
+    Object.assign(modal.style, {
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        background: "#fefefe",
+        padding: "25px",
+        borderRadius: "12px",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
+        zIndex: 1000,
+        width: "650px",
+        maxHeight: "90%",
+        overflowY: "auto"
+    });
+
+    // === Cabeçalho ===
+    const h3 = document.createElement("h3");
+    h3.textContent = `Detalhes Denúncia #${d.id}`;
+    modal.appendChild(h3);
+
+    // === Conteúdo ===
+    const contentWrapper = document.createElement("div");
+    Object.assign(contentWrapper.style, { display: "flex", gap: "20px" });
+
+    // Imagem
+    const imgDiv = document.createElement("div");
+    imgDiv.style.flex = "0 0 300px";
+    imgDiv.innerHTML = d.imagem 
+        ? `<img src="data:image/jpeg;base64,${d.imagem}" style="width:100%;border-radius:8px;object-fit:cover;">`
+        : "Sem imagem";
+
+    // Detalhes texto
+    const detailsDiv = document.createElement("div");
+    Object.assign(detailsDiv.style, { flex: "1", display: "flex", flexDirection: "column", gap: "8px" });
+
+    const info = [
+        ["Título", d.titulo],
+        ["Descrição", d.descricao],
+        ["Status Aprovação", d.statusAprovacao],
+        ["Data Denúncia", d.dataDenuncia ? new Date(d.dataDenuncia).toLocaleString() : "—"],
+        ["Data Aprovação", d.dataAprovacao ? new Date(d.dataAprovacao).toLocaleString() : "—"],
+        ["Data Resolução", d.dataResolucao ? new Date(d.dataResolucao).toLocaleString() : "—"],
+        ["Latitude", d.latitude || "—"],
+        ["Longitude", d.longitude || "—"],
+        ["Localização", d.latitude && d.longitude ? window.locationCache[d.id] || "—" : "—"],
+        ["Espécie", d.especie ? d.especie.nome : "Desconhecido"],
+        ["Denunciado por", d.denunciadoPor ? `${d.denunciadoPor.login} (${d.denunciadoPor.nomeCompleto})` : "—"],
+        ["Aprovado por", d.aprovadoPor ? `${d.aprovadoPor.login} (${d.aprovadoPor.nomeCompleto})` : "—"]
+    ];
+
+    info.forEach(([label, value]) => {
+        const p = document.createElement("p");
+        p.innerHTML = `<strong>${label}:</strong> ${value}`;
+        detailsDiv.appendChild(p);
+    });
+
+    contentWrapper.appendChild(imgDiv);
+    contentWrapper.appendChild(detailsDiv);
+    modal.appendChild(contentWrapper);
+
+    // Botão fechar
+    const btnDiv = document.createElement("div");
+    btnDiv.style.textAlign = "right";
+    btnDiv.style.marginTop = "15px";
+
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "Fechar";
+    Object.assign(closeBtn.style, {
+        padding: "8px 15px",
+        border: "none",
+        borderRadius: "6px",
+        background: "#4CAF50",
+        color: "#fff",
+        cursor: "pointer"
+    });
+    closeBtn.onclick = fecharDetalhes;
+
+    btnDiv.appendChild(closeBtn);
+    modal.appendChild(btnDiv);
+
+    // Adicionar overlay e modal ao container
+    modalContainer.appendChild(overlay);
+    modalContainer.appendChild(modal);
 }
+
+function fecharDetalhes() {
+    const modalContainer = document.getElementById("modal-container");
+    modalContainer.innerHTML = "";
+}
+
 
 function fecharDetalhes() {
     const modalContainer = document.getElementById("modal-container");
@@ -909,6 +1050,347 @@ async function salvarEspecie() {
 
 
 // ========================== FIM ESPECIE  ==================================================================================================================
+
+// ========================== INICIO QUIZ ==================================================================================================================
+
+function fetchQuiz() {
+    const content = document.getElementById("main-content");
+    content.innerHTML = `
+        <h2>Quizzes Cadastrados</h2>
+        <button id="btn-novo-quiz" class="btn">Cadastrar Quiz</button>
+        <div id="quiz-result"></div>
+        <table id="quiz-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Nível</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <!-- Formulário flutuante -->
+        <div id="quiz-form-container" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span id="close-quiz-form" class="close">&times;</span>
+                <h3>Cadastrar Novo Quiz</h3>
+                <form id="quiz-form">
+                    <div class="form-group">
+                        <label for="titulo">Título do Quiz:</label>
+                        <input type="text" id="titulo" name="titulo" placeholder="Digite o título" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nivel">Nível do Quiz:</label>
+                        <select id="nivel" name="nivel" required>
+                            <option value="1">1 - Básico</option>
+                            <option value="2">2 - Intermediário</option>
+                            <option value="3">3 - Avançado</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Cadastrar Quiz</button>
+                </form>
+            </div>
+        </div>
+    `;
+
+    // 🔹 Injeta CSS diretamente
+    const style = document.createElement("style");
+    style.innerHTML = `
+        .modal {
+            position: fixed; top:0; left:0; right:0; bottom:0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #fff; padding: 20px; border-radius: 8px;
+            width: 90%; max-width: 400px; position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        .close {
+            position: absolute; top: 10px; right: 15px;
+            font-size: 25px; cursor: pointer;
+        }
+        .modal-content h3 { margin-top:0; }
+        .btn {
+            padding: 10px 20px; background-color: #4CAF50;
+            color: white; border: none; border-radius: 5px; cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover { background-color: #45a049; }
+        #quiz-table {
+            width: 100%; border-collapse: collapse; margin-top: 20px;
+        }
+        #quiz-table th, #quiz-table td {
+            border: 1px solid #ddd; padding: 10px; text-align: left;
+        }
+        #quiz-table th { background-color: #2c2c2cff; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 8px 12px; border-radius: 4px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        @media (max-width: 600px) {
+            .modal-content { padding: 10px; }
+            #quiz-table th, #quiz-table td { padding: 6px; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Abrir formulário
+    document.getElementById("btn-novo-quiz").addEventListener("click", () => {
+        document.getElementById("quiz-form-container").style.display = "flex";
+    });
+
+    // Fechar formulário
+    document.getElementById("close-quiz-form").addEventListener("click", () => {
+        document.getElementById("quiz-form-container").style.display = "none";
+    });
+
+    // Submit do formulário
+    document.getElementById("quiz-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        cadastrarQuiz();
+    });
+
+    // Carrega tabela inicial
+    listarQuizzes();
+}
+
+function cadastrarQuiz() {
+    const titulo = document.getElementById("titulo").value;
+    const nivel = parseInt(document.getElementById("nivel").value);
+
+    fetch("http://localhost:8080/api/quizzes/criar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ titulo: titulo, nivel: nivel })
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Erro ao cadastrar quiz");
+        return res.json();
+    })
+    .then(data => {
+        document.getElementById("quiz-result").innerHTML = `<p class="success">Quiz "${data.titulo}" cadastrado com sucesso!</p>`;
+        document.getElementById("quiz-form").reset();
+        document.getElementById("quiz-form-container").style.display = "none"; // Fecha formulário
+        listarQuizzes();
+    })
+    .catch(err => {
+        document.getElementById("quiz-result").innerHTML = `<p class="error">${err.message}</p>`;
+    });
+}
+
+function listarQuizzes() {
+    fetch("http://localhost:8080/api/quizzes")
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector("#quiz-table tbody");
+            tbody.innerHTML = "";
+            data.forEach(quiz => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${quiz.id}</td>
+                    <td>${quiz.titulo}</td>
+                    <td>${quiz.nivel}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        });
+}
+
+// ========================== FIM QUIZ  ==================================================================================================================
+
+
+// ========================== INICIO PERGUNTAS  ==================================================================================================================
+
+function fetchPerguntas() {
+    const content = document.getElementById("main-content");
+    content.innerHTML = `
+        <h2>Perguntas Cadastradas</h2>
+        <button id="btn-nova-pergunta" class="btn">Cadastrar Pergunta</button>
+        <div id="pergunta-result"></div>
+        <table id="pergunta-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Quiz</th>
+                    <th>Pergunta</th>
+                    <th>Alternativas</th>
+                    <th>Resposta Correta</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <!-- Formulário flutuante -->
+        <div id="pergunta-form-container" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span id="close-pergunta-form" class="close">&times;</span>
+                <h3>Cadastrar Nova Pergunta</h3>
+                <form id="pergunta-form">
+                    <div class="form-group">
+                        <label for="quizId">Quiz:</label>
+                        <select id="quizId" name="quizId" required>
+                            <option value="">Carregando quizzes...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="texto">Texto da Pergunta:</label>
+                        <input type="text" id="texto" name="texto" placeholder="Digite a pergunta" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Alternativas:</label>
+                        <input type="text" id="alt1" placeholder="Alternativa 1" required>
+                        <input type="text" id="alt2" placeholder="Alternativa 2" required>
+                        <input type="text" id="alt3" placeholder="Alternativa 3" required>
+                        <input type="text" id="alt4" placeholder="Alternativa 4" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="respostaCorreta">Digite a alternativa correta exatamente como está acima:</label>
+                        <input type="text" id="respostaCorreta" name="respostaCorreta" placeholder="Ex: Alternativa 1" required>
+                    </div>
+                    <button type="submit" class="btn">Cadastrar Pergunta</button>
+                </form>
+            </div>
+        </div>
+    `;
+
+    // 🔹 CSS injetado
+    const style = document.createElement("style");
+    style.innerHTML = `
+        .modal { position: fixed; top:0; left:0; right:0; bottom:0; background-color: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background-color: #fff; padding: 20px; border-radius: 8px; width: 90%; max-width: 400px; position: relative; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+        .close { position: absolute; top: 10px; right: 15px; font-size: 25px; cursor: pointer; }
+        .btn { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .btn:hover { background-color: #45a049; }
+        #pergunta-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        #pergunta-table th, #pergunta-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        #pergunta-table th { background-color: #2c2c2c; color: #fff; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        .form-group input, .form-group select { margin-bottom: 8px; padding: 8px 12px; border-radius: 4px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        @media (max-width: 600px) { .modal-content { padding: 10px; } #pergunta-table th, #pergunta-table td { padding: 6px; } }
+    `;
+    document.head.appendChild(style);
+
+    // Abrir e fechar modal
+    document.getElementById("btn-nova-pergunta").addEventListener("click", () => {
+        document.getElementById("pergunta-form-container").style.display = "flex";
+    });
+    document.getElementById("close-pergunta-form").addEventListener("click", () => {
+        document.getElementById("pergunta-form-container").style.display = "none";
+    });
+
+    // Carregar quizzes no select
+    fetch("http://localhost:8080/api/quizzes")
+        .then(res => res.json())
+        .then(quizzes => {
+            const select = document.getElementById("quizId");
+            select.innerHTML = "<option value=''>Selecione um Quiz</option>";
+            quizzes.forEach(q => {
+                const option = document.createElement("option");
+                option.value = q.id;
+                option.textContent = `${q.titulo} (Nível ${q.nivel})`;
+                select.appendChild(option);
+            });
+        });
+
+    // Submit do formulário
+    document.getElementById("pergunta-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+        cadastrarPergunta();
+    });
+
+    listarPerguntas();
+}
+
+// Cadastrar pergunta com alternativas separadas
+function cadastrarPergunta() {
+    const quizId = parseInt(document.getElementById("quizId").value);
+    const texto = document.getElementById("texto").value;
+    const alternativas = [
+        document.getElementById("alt1").value,
+        document.getElementById("alt2").value,
+        document.getElementById("alt3").value,
+        document.getElementById("alt4").value
+    ];
+    const respostaCorreta = document.getElementById("respostaCorreta").value;
+
+    const respostasDTO = alternativas.map(a => ({
+        texto: a.trim(),
+        correta: a.trim() === respostaCorreta.trim()
+    }));
+
+    fetch("http://localhost:8080/api/perguntas/criar-com-respostas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quizId, texto, respostas: respostasDTO })
+    })
+    .then(res => {
+        if(!res.ok) throw new Error("Erro ao cadastrar pergunta");
+        return res.json();
+    })
+    .then(data => {
+        document.getElementById("pergunta-result").innerHTML = alert(`<p class="success">Pergunta cadastrada com sucesso!</p>`);
+        document.getElementById("pergunta-form").reset();
+        document.getElementById("pergunta-form-container").style.display = "none";
+        listarPerguntas();
+    })
+    .catch(err => {
+        document.getElementById("pergunta-result").innerHTML = `<p class="error">${err.message}</p>`;
+    });
+}
+
+function listarPerguntas() {
+    fetch("http://localhost:8080/api/perguntas")
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector("#pergunta-table tbody");
+            tbody.innerHTML = "";
+
+            data.forEach(p => {
+                // Obtem o título do quiz ou texto padrão
+                const quizTitulo = p.quiz?.titulo || "Sem Quiz";
+
+                // Obtem alternativas (array de textos)
+                const alternativas = (p.respostas || []).map(r => r.texto);
+
+                // Encontra a resposta correta
+                const respostaCorreta = (p.respostas || []).find(r => r.correta)?.texto || "";
+
+                // Cria a linha da tabela
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${p.id}</td>
+                    <td>${quizTitulo}</td>
+                    <td>${p.texto}</td>
+                    <td>${alternativas.join(", ")}</td>
+                    <td>${respostaCorreta}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // CSS básico da tabela via JS (opcional)
+            const table = document.getElementById("pergunta-table");
+            table.style.width = "100%";
+            table.style.borderCollapse = "collapse";
+            table.querySelectorAll("th, td").forEach(cell => {
+                cell.style.border = "1px solid #ddd";
+                cell.style.padding = "8px";
+            });
+            table.querySelectorAll("th").forEach(th => {
+                th.style.backgroundColor = "#2c2c2cff";
+                th.style.color = "white";
+            });
+        })
+        .catch(err => console.error("Erro ao listar perguntas:", err));
+}
+
+// ========================== FIM PERGUNTAS  ==================================================================================================================
+
 
 // ============ LOAD CONTENT ============
 /*function loadContent(name, el = null) {

@@ -49,11 +49,21 @@ function fetchUsuarios() {
 
 
 // ========================== INICIO SERES ==================================================================================================================
+// ========================== INICIO SERES ==================================================================================================================
 
-// ---------------------------- Inicialização ----------------------------
 // ---------------------------- Cache global ----------------------------
 window.seresCache = [];
 window.especiesCache = [];
+window.locationCache = JSON.parse(localStorage.getItem("locationCache") || "{}");
+
+// ---------------------------- Usuário logado (admin) ----------------------------
+function getUsuarioLogado() {
+    // Assumindo que o admin foi salvo no login
+    return {
+        login: localStorage.getItem("usuarioLogin") || "admin",
+        email: localStorage.getItem("usuarioEmail") || "admin@example.com"
+    };
+}
 
 // ---------------------------- Inicialização ----------------------------
 async function fetchSeres() {
@@ -66,20 +76,20 @@ async function fetchSeres() {
         const especies = await resEspecies.json();
         window.especiesCache = especies;
 
-        renderTabelaSeres(seres, especies);
+        renderCardsSeres(seres, especies);
     } catch (err) {
         console.error("Erro ao buscar seres ou espécies:", err);
         alert("Erro ao buscar seres ou espécies");
     }
 }
 
-// ---------------------------- Renderizar tabela ----------------------------
-function renderTabelaSeres(seres, especies) {
+// ---------------------------- Renderizar cards ----------------------------
+function renderCardsSeres(seres, especies) {
     const content = document.getElementById("main-content");
 
-    const html = `
-        <h2>Seres</h2>
-        <div style="margin-bottom:10px; display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
+    content.innerHTML = `
+        <h2 style="margin-bottom:15px;">Seres</h2>
+        <div style="margin-bottom:15px; display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
             <input type="text" id="search-nome" placeholder="Nome comum ou científico" style="padding:5px; width:200px;">
             <select id="search-especie" style="padding:5px; width:150px;">
                 <option value="">Espécie</option>
@@ -102,28 +112,9 @@ function renderTabelaSeres(seres, especies) {
                 <option value="LEAST_CONCERN">Menor preocupação</option>
             </select>
         </div>
-        <table id="tabela-seres" border="1" style="width:100%; border-collapse:collapse; margin-top:10px;">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome Comum</th>
-                    <th>Nome Científico</th>
-                    <th>Descrição</th>
-                    <th>Status Aprovação</th>
-                    <th>Status Conservação</th>
-                    <th>Categoria</th>
-                    <th>Espécie</th>
-                    <th>Tipo</th>
-                    <th>Registrado Por</th>
-                    <th>Detalhes</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-seres-body"></tbody>
-        </table>
+        <div id="cards-seres" style="display:grid; grid-template-columns: repeat(auto-fill,minmax(250px,1fr)); gap:15px;"></div>
     `;
-    content.innerHTML = html;
 
-    // Eventos de filtro
     document.getElementById("search-nome").oninput = filtrarSeres;
     document.getElementById("search-especie").onchange = filtrarSeres;
     document.getElementById("search-status-aprovacao").onchange = filtrarSeres;
@@ -132,184 +123,219 @@ function renderTabelaSeres(seres, especies) {
     mostrarSeres(seres);
 }
 
-// ---------------------------- Mostrar seres ----------------------------
-function mostrarSeres(seres) {
-    const tbody = document.getElementById("tabela-seres-body");
-    tbody.innerHTML = "";
+// ---------------------------- Mostrar seres em cards ----------------------------
+async function mostrarSeres(seres) {
+    const container = document.getElementById("cards-seres");
+    container.innerHTML = "";
 
-    seres.forEach(e => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${e.id}</td>
-            <td>${e.nomeComum}</td>
-            <td>${e.nomeCientifico}</td>
-            <td>${e.descricao}</td>
-            <td>${e.statusAprovacao}</td>
-            <td>${e.statusConservacao}</td>
-            <td>${e.categoria ? e.categoria.nome : "—"}</td>
-            <td>${e.especie ? e.especie.nome : "—"}</td>
-            <td>${e.tipo ? e.tipo.nome : "—"}</td>
-            
-            <td>${e.registradoPor ? `${e.registradoPor.login} (${e.registradoPor.nomeCompleto})` : "—"}</td>
-            <td><button onclick="abrirDetalhesSer(${e.id})"><i class="fas fa-eye"></i></button></td>
+    const cardsPromises = seres.map(async (e) => {
+        // IMAGEM
+        let imagemSrc = "assets/images/default.png";
+        try {
+            const imgRes = await fetch(`http://localhost:8080/api/seres/${e.id}/imagem`);
+            if (imgRes.ok) {
+                const base64 = await imgRes.text();
+                if (base64) imagemSrc = `data:image/jpeg;base64,${base64}`;
+            }
+        } catch {}
+
+        // LOCALIZAÇÃO
+        let locationName = "Localização não encontrada";
+        if (window.locationCache[e.id]) {
+            locationName = window.locationCache[e.id];
+        } else if (e.latitude != null && e.longitude != null) {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${e.latitude}&lon=${e.longitude}&format=json`);
+                if (response.ok) {
+                    const locationData = await response.json();
+                    if (locationData && locationData.display_name) locationName = locationData.display_name;
+                }
+                window.locationCache[e.id] = locationName;
+                localStorage.setItem("locationCache", JSON.stringify(window.locationCache));
+            } catch (err) {
+                console.warn("Erro ao buscar localização para ser:", e.id, err);
+            }
+        }
+
+        // CARD
+        const card = document.createElement("div");
+        Object.assign(card.style, {
+            background: "#fff",
+            borderRadius: "12px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column"
+        });
+
+        const img = document.createElement("img");
+        img.src = imagemSrc;
+        Object.assign(img.style, { width: "100%", height: "180px", objectFit: "cover" });
+        card.appendChild(img);
+
+        const body = document.createElement("div");
+        Object.assign(body.style, { padding: "12px", display: "flex", flexDirection: "column", gap: "6px" });
+
+        const titulo = document.createElement("h4");
+        titulo.style.margin = "0";
+        titulo.textContent = e.nomeComum || "—";
+
+        const subtitulo = document.createElement("p");
+        Object.assign(subtitulo.style, { margin: 0, fontSize: "14px", color: "#555" });
+        subtitulo.textContent = e.nomeCientifico ? `(${e.nomeCientifico})` : "";
+
+        const info = document.createElement("p");
+        Object.assign(info.style, { fontSize: "13px", color: "#444" });
+        info.innerHTML = `
+            <strong>Espécie:</strong> ${e.especie?.nome || "—"} <br>
+            <strong>Tipo:</strong> ${e.tipo?.nome || "—"} <br>
+            <strong>Localização:</strong> ${locationName} <br>
+          <strong>Denunciado por:</strong> ${e.registradoPor?.login || "—"} <br>
+            <strong>Status Aprovação:</strong> ${e.statusAprovacao || "—"}
         `;
-        tbody.appendChild(tr);
+
+        body.appendChild(titulo);
+        body.appendChild(subtitulo);
+        body.appendChild(info);
+
+        // BOTÕES
+        const actions = document.createElement("div");
+        Object.assign(actions.style, { display: "flex", justifyContent: "space-between", marginTop: "10px" });
+
+        const criarBotao = (iconClass, cor, acao) => {
+            const btn = document.createElement("button");
+            Object.assign(btn.style, { background: cor, border: "none", borderRadius: "6px", color: "#fff", cursor: "pointer", padding: "6px 10px" });
+            btn.innerHTML = `<i class="${iconClass}"></i>`;
+            btn.onclick = acao;
+            return btn;
+        };
+
+        actions.appendChild(criarBotao("fas fa-check", "#28a745", () => aprovarSer(e.id)));
+        actions.appendChild(criarBotao("fas fa-trash", "#f44336", () => deletarSer(e.id)));
+        actions.appendChild(criarBotao("fas fa-edit", "#2196F3", () => abrirModalAtualizar(e)));
+        actions.appendChild(criarBotao("fas fa-eye", "#6c757d", () => abrirModalCompleto(e)));
+
+        body.appendChild(actions);
+        card.appendChild(body);
+        container.appendChild(card);
     });
+
+    await Promise.all(cardsPromises);
 }
 
-// ---------------------------- Filtro em tempo real ----------------------------
+// ---------------------------- Filtro ----------------------------
 function filtrarSeres() {
     const nome = document.getElementById("search-nome").value.toLowerCase();
     const especie = document.getElementById("search-especie").value;
     const statusAprovacao = document.getElementById("search-status-aprovacao").value;
     const statusConservacao = document.getElementById("search-status-conservacao").value;
 
-    const seresFiltrados = window.seresCache.filter(s => {
-        return (!nome || s.nomeComum.toLowerCase().includes(nome) || s.nomeCientifico.toLowerCase().includes(nome)) &&
-               (!especie || (s.especie && s.especie.nome === especie)) &&
-               (!statusAprovacao || s.statusAprovacao === statusAprovacao) &&
-               (!statusConservacao || s.statusConservacao === statusConservacao);
-    });
+    const filtrados = window.seresCache.filter(s => 
+        (!nome || s.nomeComum.toLowerCase().includes(nome) || s.nomeCientifico.toLowerCase().includes(nome)) &&
+        (!especie || s.especie?.nome === especie) &&
+        (!statusAprovacao || s.statusAprovacao === statusAprovacao) &&
+        (!statusConservacao || s.statusConservacao === statusConservacao)
+    );
 
-    mostrarSeres(seresFiltrados);
+    mostrarSeres(filtrados);
 }
 
-// ---------------------------- Modal Detalhes ----------------------------
-// ---------------------------- Modal de detalhes (Seres) ----------------------------
-async function abrirDetalhesSer(serId) {
-    const ser = window.seresCache.find(s => s.id === serId);
-    if (!ser) return;
+// ---------------------------- Funções REST ----------------------------
+function aprovarSer(id) {
+    const u = getUsuarioLogado();
+    fetch(`http://localhost:8080/api/seres/${id}/aprovar?usuarioLogin=${u.login}&usuarioEmail=${u.email}`, { method: "POST" })
+        .then(r => r.ok ? filtrarSeres() : Promise.reject("Erro ao aprovar"))
+        .catch(console.error);
+}
 
-    const modalContainer = document.getElementById("modal-container");
-    modalContainer.innerHTML = ""; // Limpa modal anterior
+function deletarSer(id) {
+    const u = getUsuarioLogado();
+    fetch(`http://localhost:8080/api/seres/${id}?usuarioLogin=${u.login}&usuarioEmail=${u.email}`, { method: "DELETE" })
+        .then(r => r.ok ? filtrarSeres() : Promise.reject("Erro ao deletar"))
+        .catch(console.error);
+}
 
-    // === Overlay ===
+function abrirModalCompleto(ser) {
+    fetch(`http://localhost:8080/api/seres/${ser.id}/detalhes`)
+        .then(r => r.json())
+        .then(data => {
+            const container = document.getElementById("modal-container");
+            container.innerHTML = "";
+
+            const overlay = document.createElement("div");
+            Object.assign(overlay.style, { position: "fixed", top:0,left:0,width:"100%",height:"100%",background:"rgba(0,0,0,0.5)",zIndex:1099 });
+            overlay.onclick = () => container.innerHTML = "";
+
+            const modal = document.createElement("div");
+            Object.assign(modal.style, { position:"fixed", top:"50%", left:"50%", transform:"translate(-50%,-50%)", background:"#fff", padding:"20px", borderRadius:"12px", boxShadow:"0 10px 30px rgba(0,0,0,0.3)", width:"600px", maxHeight:"90%", overflowY:"auto", zIndex:1100 });
+
+            for(const key in data){
+                const p = document.createElement("p");
+                p.innerHTML = `<strong>${key}:</strong> ${data[key]??"—"}`;
+                modal.appendChild(p);
+            }
+
+            const fechar = document.createElement("button");
+            fechar.textContent = "Fechar";
+            Object.assign(fechar.style,{padding:"8px 12px",border:"none",borderRadius:"6px",background:"#888",color:"#fff",cursor:"pointer",marginTop:"10px"});
+            fechar.onclick = ()=>container.innerHTML="";
+            modal.appendChild(fechar);
+
+            container.appendChild(overlay);
+            container.appendChild(modal);
+        }).catch(console.error);
+}
+
+// Modal atualizar
+function abrirModalAtualizar(ser){
+    const container = document.getElementById("modal-container");
+    container.innerHTML = "";
+
     const overlay = document.createElement("div");
-    overlay.id = "overlay-ser";
-    Object.assign(overlay.style, {
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        background: "rgba(0,0,0,0.5)",
-        zIndex: 999
-    });
-    overlay.onclick = fecharDetalhesSer;
+    Object.assign(overlay.style,{position:"fixed", top:0, left:0, width:"100%", height:"100%", background:"rgba(0,0,0,0.5)", zIndex:1099});
+    overlay.onclick = ()=>container.innerHTML="";
 
-    // === Modal principal ===
     const modal = document.createElement("div");
-    modal.id = "detalhes-ser";
-    Object.assign(modal.style, {
-        position: "fixed",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        background: "#fefefe",
-        padding: "25px",
-        borderRadius: "12px",
-        boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
-        zIndex: 1000,
-        width: "650px",
-        maxHeight: "90%",
-        overflowY: "auto"
+    Object.assign(modal.style,{position:"fixed",top:"50%",left:"50%",transform:"translate(-50%,-50%)",background:"#fff",padding:"20px",borderRadius:"12px",boxShadow:"0 10px 30px rgba(0,0,0,0.3)",width:"500px", maxHeight:"90%", overflowY:"auto", zIndex:1100, display:"flex", flexDirection:"column", gap:"10px"});
+
+    const campos = ["nomeComum","nomeCientifico","descricao","statusAprovacao","statusConservacao"];
+    const inputs = {};
+
+    campos.forEach(c=>{
+        const label = document.createElement("label"); label.textContent=c; label.style.fontWeight="bold";
+        const input = document.createElement("input"); input.value=ser[c]??""; input.style.width="100%"; input.style.padding="5px"; input.style.marginBottom="8px";
+        modal.appendChild(label); modal.appendChild(input);
+        inputs[c]=input;
     });
 
-    // === Cabeçalho ===
-    const h3 = document.createElement("h3");
-    h3.textContent = `Detalhes Ser #${ser.id}`;
-    modal.appendChild(h3);
+    const btnSalvar = document.createElement("button");
+    btnSalvar.textContent="Salvar";
+    Object.assign(btnSalvar.style,{padding:"8px 12px", border:"none", borderRadius:"6px", background:"#28a745", color:"#fff", cursor:"pointer", marginTop:"10px"});
+    btnSalvar.onclick = ()=>{
+        const u = getUsuarioLogado();
+        const formData = new FormData();
+        formData.append("nomeComum", inputs.nomeComum.value);
+        formData.append("nomeCientifico", inputs.nomeCientifico.value);
+        formData.append("descricao", inputs.descricao.value);
+        formData.append("statusAprovacao", inputs.statusAprovacao.value);
+        formData.append("statusConservacao", inputs.statusConservacao.value);
+        formData.append("tipoNome", ser.tipo?.nome||"");
+        formData.append("especieNome", ser.especie?.nome||"");
+        formData.append("latitude", ser.latitude??0);
+        formData.append("longitude", ser.longitude??0);
 
-    // === Conteúdo ===
-    const contentWrapper = document.createElement("div");
-    Object.assign(contentWrapper.style, { display: "flex", gap: "20px" });
-
-    // Imagem
-    const imgDiv = document.createElement("div");
-    imgDiv.style.flex = "0 0 300px";
-    let imagemSrc = "";
-    try {
-        const imgRes = await fetch(`http://localhost:8080/api/seres/${serId}/imagem`);
-        if (imgRes.ok) {
-            const base64 = await imgRes.text();
-            if (base64) imagemSrc = `data:image/jpeg;base64,${base64}`;
-        }
-    } catch {}
-    imgDiv.innerHTML = imagemSrc 
-        ? `<img src="${imagemSrc}" style="width:100%; border-radius:8px; object-fit:cover;">`
-        : "Sem imagem";
-
-    // Detalhes texto
-    const detailsDiv = document.createElement("div");
-    Object.assign(detailsDiv.style, { flex: "1", display: "flex", flexDirection: "column", gap: "8px" });
-
-    const info = [
-        ["Nome Comum", ser.nomeComum],
-        ["Nome Científico", ser.nomeCientifico],
-        ["Descrição", ser.descricao],
-        ["Status Aprovação", ser.statusAprovacao],
-        ["Status Conservação", ser.statusConservacao],
-        ["Categoria", ser.categoria ? ser.categoria.nome : "—"],
-        ["Espécie", ser.especie ? ser.especie.nome : "—"],
-        ["Tipo", ser.tipo ? ser.tipo.nome : "—"],
-        ["Registrado Por", ser.registradoPor ? `${ser.registradoPor.login} (${ser.registradoPor.nomeCompleto})` : "—"],
-        ["Aprovado Por", ser.aprovadoPor ? `${ser.aprovadoPor.login} (${ser.aprovadoPor.nomeCompleto})` : "—"],
-        ["Data Registro", ser.dataRegistro || "—"],
-        ["Data Aprovação", ser.dataAprovacao || "—"],
-        ["Latitude", ser.latitude || "—"],
-        ["Longitude", ser.longitude || "—"],
-        ["Localização", ser.latitude && ser.longitude ? `Lat: ${ser.latitude}, Lon: ${ser.longitude}` : "—"]
-    ];
-
-    info.forEach(([label, value]) => {
-        const p = document.createElement("p");
-        p.innerHTML = `<strong>${label}:</strong> ${value}`;
-        detailsDiv.appendChild(p);
-    });
-
-    contentWrapper.appendChild(imgDiv);
-    contentWrapper.appendChild(detailsDiv);
-    modal.appendChild(contentWrapper);
-
-    // === Botões de ação ===
-    const btnDiv = document.createElement("div");
-    Object.assign(btnDiv.style, { marginTop: "15px", display: "flex", gap: "10px", justifyContent: "flex-end" });
-
-    const criarBotao = (texto, acao, cor="#4CAF50") => {
-        const btn = document.createElement("button");
-        btn.textContent = texto;
-        Object.assign(btn.style, {
-            padding: "8px 15px",
-            border: "none",
-            borderRadius: "6px",
-            background: cor,
-            color: "#fff",
-            cursor: "pointer"
-        });
-        btn.onclick = acao;
-        return btn;
+        fetch(`http://localhost:8080/api/seres/${ser.id}/atualizar-multipart?usuarioLogin=${u.login}&usuarioEmail=${u.email}`, { method:"PUT", body: formData })
+            .then(r=>r.ok? filtrarSeres() : Promise.reject("Erro ao atualizar"))
+            .catch(console.error);
+        container.innerHTML="";
     };
-
-    btnDiv.appendChild(criarBotao("Aprovar", () => aprovarSer(serId)));
-    btnDiv.appendChild(criarBotao("Deletar", () => deletarSer(serId), "#f44336"));
-    btnDiv.appendChild(criarBotao("Atualizar", () => atualizarSer(serId), "#2196F3"));
-    btnDiv.appendChild(criarBotao("Fechar", fecharDetalhesSer, "#888"));
-
-    modal.appendChild(btnDiv);
-
-    // === Adicionar overlay e modal ao container ===
-    modalContainer.appendChild(overlay);
-    modalContainer.appendChild(modal);
+    modal.appendChild(btnSalvar);
+    container.appendChild(overlay);
+    container.appendChild(modal);
 }
 
-function fecharDetalhesSer() {
-    const modalContainer = document.getElementById("modal-container");
-    modalContainer.innerHTML = "";
-}
-
-// Inicialização
-// fetchSeres(); // agora é chamado via loadContent('Seres') no menu
-
+// ---------------------------- Inicializa ----------------------------
+fetchSeres();
 
 // ========================== INICIO DENUNCIA==================================================================================================================
 

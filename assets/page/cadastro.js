@@ -194,12 +194,11 @@ function cadastrar(event) {
     xhr.send(formData);
 }
 
-
-window.locationCache = {};
+window.locationCache = JSON.parse(localStorage.getItem("locationCache") || "{}");
 
 async function listarSeres() {
     const listaContainer = document.getElementById("listaEspecies");
-    listaContainer.innerHTML = ""; // limpa
+    listaContainer.innerHTML = ""; // limpa o container
 
     try {
         const res = await fetch("http://localhost:8080/api/seres");
@@ -212,9 +211,22 @@ async function listarSeres() {
             return;
         }
 
-        for (const ser of seresAprovados) {
-            // Imagem do ser
-            let imagemSrc = 'assets/images/default.png';
+        const statusLabels = {
+            "EXTINTO": "Extinto",
+            "CRITICAMENTE_EM_PERIGO": "Criticamente em perigo",
+            "EM_PERIGO": "Em perigo",
+            "VULNERAVEL": "Vulnerável",
+            "QUASE_AMEACADO": "Quase ameaçado",
+            "POUCO_PREOCUPANTE": "Pouco preocupante",
+            "DADOS_INSUFICIENTES": "Dados insuficientes"
+        };
+
+        const fragment = document.createDocumentFragment();
+
+        // Criar um array de Promises para processar todos os seres em paralelo
+        const cardsPromises = seresAprovados.map(async (ser) => {
+            // IMAGEM
+            let imagemSrc = "assets/images/default.png";
             try {
                 const imgRes = await fetch(`http://localhost:8080/api/seres/${ser.id}/imagem`);
                 if (imgRes.ok) {
@@ -223,65 +235,85 @@ async function listarSeres() {
                 }
             } catch {}
 
-            // Localização
-            let locationName = "—";
+            // LOCALIZAÇÃO
+            let locationName = "Localização não encontrada";
             if (window.locationCache[ser.id]) {
                 locationName = window.locationCache[ser.id];
-            } else if (ser.latitude && ser.longitude) {
+            } else if (ser.latitude != null && ser.longitude != null) {
                 try {
-                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${ser.latitude}&lon=${ser.longitude}&format=json`);
-                    const locationData = await response.json();
-                    locationName = locationData.display_name || "—";
+                    const response = await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?lat=${ser.latitude}&lon=${ser.longitude}&format=json`
+                    );
+                    if (response.ok) {
+                        const locationData = await response.json();
+                        if (locationData && locationData.display_name) {
+                            locationName = locationData.display_name;
+                        }
+                    }
                     window.locationCache[ser.id] = locationName;
-                } catch {}
+                    localStorage.setItem("locationCache", JSON.stringify(window.locationCache));
+                } catch (err) {
+                    console.warn("Erro ao buscar localização para ser:", ser.id, err);
+                }
             }
 
-            // Ícone do status de conservação
-            // Ícone ou avatar para status de conservação
-            let statusIcon = '';
-            switch (ser.statusConservacao) {
-                case "EM_PERIGO":
-                    statusIcon = '<i class="bi bi-exclamation-triangle-fill text-danger"></i>';
-                    break;
-                case "VULNERAVEL":
-                    statusIcon = '<i class="bi bi-exclamation-circle-fill text-warning"></i>';
-                    break;
-                case "POUCO_PREOCUPANTE":
-                    statusIcon = '<i class="bi bi-check-circle-fill text-success"></i>';
-                    break;
-                default:
-                    statusIcon = '<i class="bi bi-question-circle-fill text-secondary"></i>';
-            }
+            // ÍCONE DO STATUS
+            const statusIconMap = {
+                "EXTINTO": '<i class="bi bi-x-circle-fill text-dark"></i>',
+                "CRITICAMENTE_EM_PERIGO": '<i class="bi bi-exclamation-octagon-fill text-danger"></i>',
+                "EM_PERIGO": '<i class="bi bi-exclamation-triangle-fill text-danger"></i>',
+                "VULNERAVEL": '<i class="bi bi-exclamation-circle-fill text-warning"></i>',
+                "QUASE_AMEACADO": '<i class="bi bi-shield-fill-exclamation text-warning"></i>',
+                "POUCO_PREOCUPANTE": '<i class="bi bi-check-circle-fill text-success"></i>',
+                "DADOS_INSUFICIENTES": '<i class="bi bi-question-circle-fill text-secondary"></i>'
+            };
+            const statusIcon = statusIconMap[ser.statusConservacao] || '<i class="bi bi-question-circle-fill text-secondary"></i>';
 
             const col = document.createElement("div");
             col.className = "col";
 
             col.innerHTML = `
                 <div class="card h-100 pinterest-card">
-                    <img src="${imagemSrc}" class="card-img-top" alt="${ser.nomeComum}">
+                    <img src="${imagemSrc}" class="card-img-top" alt="Foto de ${ser.nomeComum}"
+                         onerror="this.src='assets/images/default.png'">
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">${ser.nomeComum} <small class="text-muted">(${ser.nomeCientifico})</small></h5>
+                        <h5 class="card-title">
+                            ${ser.nomeComum} 
+                            <small class="text-muted">(${ser.nomeCientifico})</small>
+                        </h5>
                         <p class="mb-1">
                             <i class="bi bi-bookmark-fill text-primary me-1"></i>
                             ${ser.especie ? ser.especie.nome : "—"}
                         </p>
                         <p class="mb-1">
+                            <i class="bi bi-bookmark-fill text-primary me-1"></i>
+                            ${ser.especie ? ser.descricao : "—"}
+                        </p>
+                        <p class="mb-1">
                             ${statusIcon}
-                            ${ser.statusConservacao || "—"}
+                            ${statusLabels[ser.statusConservacao] || "—"}
                         </p>
                         <p class="mb-1">
                             <i class="bi bi-person-circle me-1"></i>
                             ${ser.registradoPor ? ser.registradoPor.login : "—"}
                         </p>
-                        <p class="mb-2"><i class="bi bi-geo-alt-fill text-danger me-1"></i> ${locationName}</p>
-                      <a href=seresDetalhes.html"?id=${ser.id}" class="btn btn-sm btn-success mt-auto text-center">Ver Mais</a>
-
+                        <p class="mb-2">
+                            <i class="bi bi-geo-alt-fill text-danger me-1"></i> ${locationName}
+                        </p>
+                       <a href="seresDetalhes.html?id=${ser.id}" class="btn btn-sm btn-success mt-auto text-center">
+                            Ver Mais
+                        </a>
                     </div>
                 </div>
             `;
 
-            listaContainer.appendChild(col);
-        }
+            fragment.appendChild(col);
+        });
+
+        // Espera todas as promessas de criação de cards
+        await Promise.all(cardsPromises);
+
+        listaContainer.appendChild(fragment);
 
     } catch (err) {
         console.error(err);
@@ -289,7 +321,7 @@ async function listarSeres() {
     }
 }
 
-// Função do botão "Ver Mais"
+// Função "Ver Mais"
 function verMais(serId) {
     alert(`Ver mais informações do ser com ID: ${serId}`);
 }

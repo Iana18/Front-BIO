@@ -165,3 +165,99 @@ function carregarEspecies() {
 
   serForm.addEventListener("submit", enviarDenuncia);
 });
+
+
+async function fetchDenuncias() {
+    try {
+        const resp = await fetch("http://localhost:8080/api/denuncias");
+        if (!resp.ok) throw new Error("Erro ao buscar denúncias");
+        const denuncias = await resp.json();
+        mostrarDenuncias(denuncias);
+    } catch (err) {
+        console.error(err);
+        alert("Erro ao buscar denúncias.");
+    }
+}
+
+function mostrarDenuncias(denuncias) {
+    const container = document.getElementById("denuncias-container");
+    container.innerHTML = ""; // limpa antes
+    container.style.display = "grid";
+    container.style.gridTemplateColumns = "repeat(auto-fit, minmax(250px, 1fr))";
+    container.style.gap = "20px";
+    container.style.padding = "10px";
+
+    denuncias.forEach(d => {
+        const card = document.createElement("div");
+        card.style.backgroundColor = "#fff";
+        card.style.borderRadius = "12px";
+        card.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+        card.style.overflow = "hidden";
+        card.style.display = "flex";
+        card.style.flexDirection = "column";
+        card.style.position = "relative"; // necessário para o ícone
+
+        // imagem
+        const img = document.createElement("img");
+        img.src = d.imagem ? `data:image/jpeg;base64,${d.imagem}` : "assets/images/default.png";
+        img.style.width = "100%";
+        img.style.height = "180px";
+        img.style.objectFit = "cover";
+        card.appendChild(img);
+
+        // corpo do card
+        const body = document.createElement("div");
+        body.style.padding = "12px";
+        body.style.display = "flex";
+        body.style.flexDirection = "column";
+        body.style.gap = "6px";
+
+        const titulo = document.createElement("h4");
+        titulo.textContent = d.titulo || "—";
+        titulo.style.margin = "0";
+
+        const descricao = document.createElement("p");
+        descricao.textContent = d.descricao || "Sem descrição";
+        descricao.style.margin = "0";
+        descricao.style.fontSize = "13px";
+        descricao.style.color = "#555";
+
+        const especie = document.createElement("p");
+        especie.textContent = d.especie ? `Espécie: ${d.especie.nome}` : "";
+        especie.style.fontSize = "12px";
+        especie.style.color = "#444";
+
+        body.appendChild(titulo);
+        body.appendChild(descricao);
+        body.appendChild(especie);
+        card.appendChild(body);
+
+        // ícone de não resolvida
+        // ícone de não resolvida
+if (d.statusAprovacao === "RESOLVIDA") {
+    const icon = document.createElement("i");
+    icon.className = "fas fa-check-circle"; // ícone Font Awesome de check
+    icon.style.position = "absolute";
+    icon.style.bottom = "10px";
+    icon.style.right = "10px";
+    icon.style.fontSize = "20px";
+    icon.style.color = "#28a745"; // verde
+    card.appendChild(icon);
+} else {
+    const icon = document.createElement("i");
+    icon.className = "fas fa-exclamation-circle"; // ícone Font Awesome de alerta
+    icon.style.position = "absolute";
+    icon.style.bottom = "10px";
+    icon.style.right = "10px";
+    icon.style.fontSize = "20px";
+    icon.style.color = "#ff5555"; // vermelho
+    card.appendChild(icon);
+}
+
+
+        container.appendChild(card);
+    });
+}
+
+// chama a função ao carregar a página
+fetchDenuncias();

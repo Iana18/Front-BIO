@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard Melhorado</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <link rel="stylesheet" href="assets/css/adim.css">
 <style>
   /* Estilo específico para perfil */
@@ -55,7 +56,7 @@
             <li onclick="loadContent('Tipos', this)"><i class="fas fa-tags"></i> <span>Tipos</span></li>
             <li onclick="loadContent('Quiz', this)"><i class="fas fa-question-circle"></i> <span>Quiz</span></li>
             <li onclick="loadContent('Perguntas', this)"><i class="fas fa-question-circle"></i> <span>Perguntas</span></li>
-            <li onclick="loadContent('Respostas', this)"><i class="fas fa-check-circle"></i> <span>Respostas</span></li>
+            <li onclick="loadContent('Comentarios', this)"><i class="fas fa-check-circle"></i> <span>Comenentarios</span></li>
           </ul>
         </li>
       </ul>
@@ -150,7 +151,7 @@ else if (name === "Categorias") fetchCategorias();
 else if (name === "Tipos") fetchTipos();
 else if (name === "Quiz")fetchQuiz();
 else if (name === "Perguntas")fetchPerguntas();
-else if (name === "Respostas")fetchRespostas();
+else if (name === "Comentarios")fetchComentarios();
 else content.innerHTML = `<h2>${name}</h2><p>Conteúdo em construção...</p>`;
 }
 
@@ -163,7 +164,7 @@ function fetchCategorias() {console.log("Buscando Categorias...");}
 function fetchTipos() {console.log("Buscando Tipos...");}
 function fetchQuiz() {console.log("Buscando Quiz...");}
 function fetchPerguntas() {console.log("Buscando Perguntas...");}
-function fetchRespostas() {console.log("Buscando Respostas...");}
+function fetchRespostas() {console.log("Buscando Comentarios...");}
 
 
 </script>

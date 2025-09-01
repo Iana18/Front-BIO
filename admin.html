@@ -1,28 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard Melhorado</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<link rel="stylesheet" href="assets/css/adim.css">
-<style>
-  /* Estilo específico para perfil */
-  #perfil-template {
-    text-align: center;
-    padding: 40px 0;
-  }
-  .user-login {
-    font-size: 20px;
-    margin: 0;
-  }
-  .user-email {
-    font-size: 12px;
-    color: gray;
-    margin: 2px 0 0 0;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/adim.css">
 </head>
 <body>
 <div class="layout">
@@ -56,12 +39,12 @@
             <li onclick="loadContent('Tipos', this)"><i class="fas fa-tags"></i> <span>Tipos</span></li>
             <li onclick="loadContent('Quiz', this)"><i class="fas fa-question-circle"></i> <span>Quiz</span></li>
             <li onclick="loadContent('Perguntas', this)"><i class="fas fa-question-circle"></i> <span>Perguntas</span></li>
-            <li onclick="loadContent('Comentarios', this)"><i class="fas fa-check-circle"></i> <span>Comenentarios</span></li>
+            <li onclick="loadContent('Comentarios', this)"><i class="fas fa-check-circle"></i> <span>Comentarios</span></li>
           </ul>
         </li>
       </ul>
     </div>
-    <!-- Botão Sair fixo no rodapé -->
+    <!-- Botão Sair fixo -->
     <div class="logout" onclick="loadContent('Logout', this)">
       <i class="fas fa-sign-out-alt"></i> <span>Sair</span>
     </div>
@@ -82,12 +65,12 @@
     </div>
 
     <div class="footer">
-     Bio-Guiné © <span id="year"></span>
+      Bio-Guiné © <span id="year"></span>
     </div>
   </div>
 </div>
 
-<!-- Template de Perfil -->
+<!-- Template oculto de perfil -->
 <div id="perfil-template" style="display:none;">
   <h2>Perfil do Usuário</h2>
   <div class="user-info">
@@ -96,78 +79,20 @@
   </div>
 </div>
 
-
+<!-- Apenas o ano -->
 <script>
-document.getElementById('year').textContent = new Date().getFullYear();
-
-// Toggle menu lateral
-function toggleMenu() {
-  document.getElementById('sider').classList.toggle('collapsed');
-}
-
-// Toggle submenu
-function toggleSubmenu(element) {
-  const li = element.parentElement;
-  li.classList.toggle('open');
-  const submenu = li.querySelector('.submenu');
-  submenu.classList.toggle('open');
-}
-
-// Função unificada de loadContent
-function loadContent(name, el = null) {
-  const content = document.getElementById('main-content');
-  const breadcrumb = document.getElementById('breadcrumb');
-
-  // Marca menu ativo
-  document.querySelectorAll('.menu li').forEach(li => li.classList.remove('active'));
-  if(el && !el.classList.contains('logout')) el.parentElement.classList.add('active');
-
-  breadcrumb.textContent = name;
-  content.innerHTML = `<p>Carregando ${name}...</p>`;
-
-  // Perfil
-  if(name === "Perfil") {
-    const login = localStorage.getItem("login") || "—";
-    const email = localStorage.getItem("email") || "—";
-
-    console.log("Carregando perfil:", login, email);
-
-    const perfilTemplate = document.getElementById("perfil-template");
-    const perfilClone = perfilTemplate.cloneNode(true);
-    perfilClone.style.display = "block";
-    perfilClone.querySelector(".user-login").textContent = login;
-    perfilClone.querySelector(".user-email").textContent = email;
-
-    content.innerHTML = "";
-    content.appendChild(perfilClone);
-    return;
-  }
-// Submenus de dados
-if (name === "Usuários") fetchUsuarios();
-else if (name === "Seres") fetchSeres();
-else if (name === "Denúncias") fetchDenuncias();
-else if (name === "Espécies") fetchEspecies();
-else if (name === "Categorias") fetchCategorias();
-else if (name === "Tipos") fetchTipos();
-else if (name === "Quiz")fetchQuiz();
-else if (name === "Perguntas")fetchPerguntas();
-else if (name === "Comentarios")fetchComentarios();
-else content.innerHTML = `<h2>${name}</h2><p>Conteúdo em construção...</p>`;
-}
-
-// Placeholder das funções de dados
-function fetchUsuarios() { console.log("Buscando Usuários..."); }
-function fetchSeres() { console.log("Buscando Seres..."); }
-function fetchDenuncias() { console.log("Buscando Denúncias..."); }
-function fetchEspecies() { console.log("Buscando Espécies...");}
-function fetchCategorias() {console.log("Buscando Categorias...");}
-function fetchTipos() {console.log("Buscando Tipos...");}
-function fetchQuiz() {console.log("Buscando Quiz...");}
-function fetchPerguntas() {console.log("Buscando Perguntas...");}
-function fetchRespostas() {console.log("Buscando Comentarios...");}
-
-
+  document.getElementById('year').textContent = new Date().getFullYear();
 </script>
+
+<!-- Scripts de páginas (cada um expõe sua função no window) -->
+
+<script src="assets/page/seres.js"></script>
+<script src="assets/page/denunciaadmin.js"></script>
+<script src="assets/page/categoriasadmin.js"></script>
+<script src="assets/page/especie.js"></script>
+<script src="assets/page/tipo.js"></script>
+<script src="assets/page/useradmin.js"></script>
+<!-- Script orquestrador -->
 <script src="assets/page/adim.js"></script>
 </body>
 </html>

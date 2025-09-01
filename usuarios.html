@@ -1,20 +1,174 @@
-<h1>Usuários</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfil do Usuário</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  body { font-family: 'Inter', sans-serif; margin:0; padding:0; background:#f5f5f5; }
 
-<div id="controls">
-  <input type="text" id="search" placeholder="Buscar por nome, email ou login">
-  <button id="delete-btn">Excluir Selecionado</button>
+  /* Container ocupa 100% da largura do pai */
+  .container { width: 100%; max-width: 1200px; margin: 20px auto; background:#fff; padding:20px; border-radius:10px; }
+
+  .profile-header { display:flex; align-items:center; border-bottom:1px solid #ddd; padding-bottom:20px; margin-bottom:20px; }
+  .avatar { width:150px; height:150px; border-radius:50%; background:#ccc; display:flex; align-items:center; justify-content:center; font-size:60px; color:#fff; margin-right:20px; }
+  .user-info { display:flex; flex-direction:column; }
+  .user-info h2 { margin:0; font-size:24px; }
+  .user-info p { margin:4px 0; color:#555; }
+
+  .section { margin-bottom:20px; }
+  .section h3 { border-bottom:1px solid #ddd; padding-bottom:5px; margin-bottom:10px; }
+
+  /* Layout de cards para seres e denúncias */
+  .grid-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+
+  .card:hover { transform: translateY(-5px); }
+
+  .card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .card p { margin: 0; }
+  .card p.bold { font-weight: bold; }
+  .card p.normal { font-weight: normal; font-size: 0.9em; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header do perfil -->
+  <div class="profile-header">
+    <div class="avatar" id="avatar"><i class="fas fa-user"></i></div>
+    <div class="user-info">
+      <h2 id="user-login">Usuário</h2>
+      <p id="user-email">email@exemplo.com</p>
+    </div>
+  </div>
+
+  <!-- Lista de Seres -->
+  <div class="section">
+    <h3>Seres Registrados Por Ti</h3>
+    <div id="seres-list" class="grid-list"></div>
+  </div>
+
+  <!-- Lista de Denúncias -->
+  <div class="section">
+    <h3>Denúncias Feitas</h3>
+    <div id="denuncias-list" class="grid-list"></div>
+  </div>
 </div>
 
-<table id="usuario-table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Login</th>
-      <th>Nome Completo</th>
-      <th>Email</th>
-      <th>Password</th>
-      <th>Role</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+<script>
+window.onload = async function() {
+    const login = localStorage.getItem("login");
+    const email = localStorage.getItem("email");
+
+    if (!login || !email) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    document.getElementById("user-login").textContent = login;
+    document.getElementById("user-email").textContent = email;
+    document.getElementById("avatar").textContent = login.charAt(0).toUpperCase();
+
+    // Função para criar card
+    function criarCard(imgSrc, titulo, descricao) {
+        const div = document.createElement("div");
+        div.className = "card";
+
+        const img = document.createElement("img");
+        img.src = imgSrc || "https://via.placeholder.com/150";
+
+        const pTitulo = document.createElement("p");
+        pTitulo.className = "bold";
+        pTitulo.textContent = titulo;
+
+        const pDescricao = document.createElement("p");
+        pDescricao.className = "normal";
+        pDescricao.textContent = descricao;
+
+        div.appendChild(img);
+        div.appendChild(pTitulo);
+        div.appendChild(pDescricao);
+
+        return div;
+    }
+
+    // ----------------- SERES -----------------
+    try {
+        const response = await fetch(`http://localhost:8080/api/seres/usuario?login=${encodeURIComponent(login)}&email=${encodeURIComponent(email)}`);
+        if (!response.ok) throw new Error("Erro ao buscar seres do usuário");
+        const seres = await response.json();
+
+        const seresList = document.getElementById("seres-list");
+        seresList.innerHTML = "";
+
+        if (seres.length === 0) {
+            seresList.innerHTML = "<p>Sem seres cadastrados.</p>";
+        } else {
+            for (const s of seres) {
+                let imgSrc = "https://via.placeholder.com/150";
+                try {
+                    const imgResponse = await fetch(`http://localhost:8080/api/seres/${s.id}/imagem`);
+                    if (imgResponse.ok) {
+                        const base64 = await imgResponse.text();
+                        imgSrc = `data:image/png;base64,${base64}`;
+                    }
+                } catch {}
+                const card = criarCard(imgSrc, s.nomeComum, s.nomeCientifico);
+                seresList.appendChild(card);
+            }
+        }
+    } catch (err) {
+        console.error(err);
+        document.getElementById("seres-list").innerHTML = "<p>Erro ao carregar seres.</p>";
+    }
+
+    // ----------------- DENÚNCIAS -----------------
+    try {
+        const responseDenuncias = await fetch(`http://localhost:8080/api/denuncias/usuario?login=${encodeURIComponent(login)}&email=${encodeURIComponent(email)}`);
+        if (!responseDenuncias.ok) throw new Error("Erro ao buscar denúncias do usuário");
+        const denuncias = await responseDenuncias.json();
+
+        const denunciasList = document.getElementById("denuncias-list");
+        denunciasList.innerHTML = "";
+
+        if (denuncias.length === 0) {
+            denunciasList.innerHTML = "<p>Sem denúncias feitas.</p>";
+        } else {
+            for (const d of denuncias) {
+                const imgSrc = d.imagem ? `data:image/png;base64,${d.imagem}` : "https://via.placeholder.com/150";
+                const card = criarCard(imgSrc, d.titulo, d.descricao);
+                denunciasList.appendChild(card);
+            }
+        }
+    } catch (err) {
+        console.error(err);
+        document.getElementById("denuncias-list").innerHTML = "<p>Erro ao carregar denúncias.</p>";
+    }
+};
+</script>
+</body>
+</html>

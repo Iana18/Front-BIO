@@ -1,18 +1,21 @@
-// ------------------- Variáveis globais -------------------
+// ==========================
+// Variáveis Globais
+// ==========================
 let map;
 let marker;
-let especiesArray = []; // guarda todas as espécies com suas categorias
+let especiesArray = [];
 
 const btnMostrarForm = document.getElementById("btnMostrarForm");
 const serForm = document.getElementById("serForm");
 const inputImagem = document.getElementById("imagem");
 const btnTirarFoto = document.getElementById("btnTirarFoto");
 const btnEscolherGaleria = document.getElementById("btnEscolherGaleria");
-//const previewImagem = document.getElementById("previewImagem");
-  const inputGaleria = document.getElementById("imagem");
-    const preview = document.getElementById("previewImagem");
+const inputGaleria = document.getElementById("imagem");
+const preview = document.getElementById("previewImagem");
 
-// ------------------- Inicialização -------------------
+// ==========================
+// Inicialização
+// ==========================
 document.addEventListener("DOMContentLoaded", function () {
     carregarEspecies();
     carregarTipos();
@@ -20,16 +23,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     serForm.addEventListener("submit", cadastrar);
     serForm.style.display = "none";
+
+    listarSeres();
+    inicializarMenuHamburger();
 });
 
-// ------------------- Funções de requisição (XHR) -------------------
+// ==========================
+// Requisições XHR
+// ==========================
 function carregarEspecies() {
     const xhr = new XMLHttpRequest();
     xhr.open("GET", "http://localhost:8080/api/especies", true);
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             const data = JSON.parse(xhr.responseText);
-            especiesArray = data; // salva para usar no change, se necessário
+            especiesArray = data;
             const select = document.getElementById("especie");
             select.innerHTML = '<option value="">Selecione uma Espécie</option>';
             data.forEach(esp => {
@@ -62,9 +70,12 @@ function carregarTipos() {
     xhr.send();
 }
 
-// ------------------- Inicializa mapa -------------------
+// ==========================
+// Inicializa Mapa
+// ==========================
 function inicializarMapa() {
     map = L.map('map').setView([11.8037, -15.1804], 8);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
@@ -79,51 +90,46 @@ function inicializarMapa() {
     });
 }
 
-// ------------------- Mostrar formulário -------------------
+// ==========================
+// Mostrar formulário
+// ==========================
 btnMostrarForm.addEventListener("click", () => {
     serForm.style.display = "block";
     btnMostrarForm.style.display = "none";
     serForm.scrollIntoView({ behavior: "smooth" });
-
     setTimeout(() => map.invalidateSize(), 100);
 });
 
-// ------------------- Upload de imagem -------------------
-// Abrir câmera
-    btnTirarFoto.addEventListener("click", () => {
-        inputImagem.value = ""; 
-        inputImagem.click();
-    });
+// ==========================
+// Upload de Imagem e Preview
+// ==========================
+btnTirarFoto.addEventListener("click", () => {
+    inputImagem.value = ""; 
+    inputImagem.click();
+});
 
-    // Abrir galeria
-    btnEscolherGaleria.addEventListener("click", () => {
-        inputGaleria.value = ""; 
-        inputGaleria.click();
-    });
+btnEscolherGaleria.addEventListener("click", () => {
+    inputGaleria.value = ""; 
+    inputGaleria.click();
+});
 
-    // Mostrar preview quando escolher da câmera
-    inputImagem.addEventListener("change", () => {
-        mostrarPreview(inputImagem.files[0]);
-    });
+inputImagem.addEventListener("change", () => mostrarPreview(inputImagem.files[0]));
+inputGaleria.addEventListener("change", () => mostrarPreview(inputGaleria.files[0]));
 
-    // Mostrar preview quando escolher da galeria
-    inputGaleria.addEventListener("change", () => {
-        mostrarPreview(inputGaleria.files[0]);
-    });
-
-    // Função de preview
-    function mostrarPreview(file) {
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = e => {
-                preview.src = e.target.result;
-                preview.style.display = "block";
-            };
-            reader.readAsDataURL(file);
-        }
+function mostrarPreview(file) {
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
     }
+}
 
-// ------------------- Função de cadastro -------------------
+// ==========================
+// Função de Cadastro
+// ==========================
 function cadastrar(event) {
     event.preventDefault();
 
@@ -142,13 +148,9 @@ function cadastrar(event) {
         return;
     }
 
-    const especieSelect = document.getElementById("especie");
-    const tipoSelect = document.getElementById("tipo");
-    const statusConservacaoSelect = document.getElementById("statusConservacao");
-
-    const especieId = especieSelect.value;
-    const tipoId = tipoSelect.value;
-    const statusConservacao = statusConservacaoSelect.value;
+    const especieId = document.getElementById("especie").value;
+    const tipoId = document.getElementById("tipo").value;
+    const statusConservacao = document.getElementById("statusConservacao").value;
 
     if (!nomeComum || !nomeCientifico || !especieId || !tipoId || !statusConservacao || !latitude || !longitude) {
         alert("Preencha todos os campos obrigatórios!");
@@ -162,13 +164,12 @@ function cadastrar(event) {
     formData.append("nomeCientifico", nomeCientifico);
     formData.append("descricao", descricao);
     formData.append("especieId", especieId);
-    formData.append("especieNome", especieSelect.selectedOptions[0].text);
+    formData.append("especieNome", document.getElementById("especie").selectedOptions[0].text);
     formData.append("tipoId", tipoId);
-    formData.append("tipoNome", tipoSelect.selectedOptions[0].text);
+    formData.append("tipoNome", document.getElementById("tipo").selectedOptions[0].text);
     formData.append("statusConservacao", statusConservacao);
     formData.append("latitude", latitude);
     formData.append("longitude", longitude);
-
     if (imagemFile) formData.append("imagemFile", imagemFile);
 
     const xhr = new XMLHttpRequest();
@@ -178,7 +179,7 @@ function cadastrar(event) {
         if (xhr.status === 200 || xhr.status === 201) {
             alert("Ser cadastrado com sucesso!");
             serForm.reset();
-            previewImagem.style.display = "none";
+            preview.style.display = "none";
             serForm.style.display = "none";
             btnMostrarForm.style.display = "block";
         } else {
@@ -194,11 +195,14 @@ function cadastrar(event) {
     xhr.send(formData);
 }
 
+// ==========================
+// Listagem de Seres
+// ==========================
 window.locationCache = JSON.parse(localStorage.getItem("locationCache") || "{}");
 
 async function listarSeres() {
     const listaContainer = document.getElementById("listaEspecies");
-    listaContainer.innerHTML = ""; // limpa o container
+    listaContainer.innerHTML = "";
 
     try {
         const res = await fetch("http://localhost:8080/api/seres");
@@ -221,11 +225,19 @@ async function listarSeres() {
             "DADOS_INSUFICIENTES": "Dados insuficientes"
         };
 
+        const statusIconMap = {
+            "EXTINTO": '<i class="bi bi-x-circle-fill text-dark"></i>',
+            "CRITICAMENTE_EM_PERIGO": '<i class="bi bi-exclamation-octagon-fill text-danger"></i>',
+            "EM_PERIGO": '<i class="bi bi-exclamation-triangle-fill text-danger"></i>',
+            "VULNERAVEL": '<i class="bi bi-exclamation-circle-fill text-warning"></i>',
+            "QUASE_AMEACADO": '<i class="bi bi-shield-fill-exclamation text-warning"></i>',
+            "POUCO_PREOCUPANTE": '<i class="bi bi-check-circle-fill text-success"></i>',
+            "DADOS_INSUFICIENTES": '<i class="bi bi-question-circle-fill text-secondary"></i>'
+        };
+
         const fragment = document.createDocumentFragment();
 
-        // Criar um array de Promises para processar todos os seres em paralelo
         const cardsPromises = seresAprovados.map(async (ser) => {
-            // IMAGEM
             let imagemSrc = "assets/images/default.png";
             try {
                 const imgRes = await fetch(`http://localhost:8080/api/seres/${ser.id}/imagem`);
@@ -235,20 +247,15 @@ async function listarSeres() {
                 }
             } catch {}
 
-            // LOCALIZAÇÃO
             let locationName = "Localização não encontrada";
             if (window.locationCache[ser.id]) {
                 locationName = window.locationCache[ser.id];
-            } else if (ser.latitude != null && ser.longitude != null) {
+            } else if (ser.latitude && ser.longitude) {
                 try {
-                    const response = await fetch(
-                        `https://nominatim.openstreetmap.org/reverse?lat=${ser.latitude}&lon=${ser.longitude}&format=json`
-                    );
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${ser.latitude}&lon=${ser.longitude}&format=json`);
                     if (response.ok) {
                         const locationData = await response.json();
-                        if (locationData && locationData.display_name) {
-                            locationName = locationData.display_name;
-                        }
+                        if (locationData.display_name) locationName = locationData.display_name;
                     }
                     window.locationCache[ser.id] = locationName;
                     localStorage.setItem("locationCache", JSON.stringify(window.locationCache));
@@ -257,62 +264,27 @@ async function listarSeres() {
                 }
             }
 
-            // ÍCONE DO STATUS
-            const statusIconMap = {
-                "EXTINTO": '<i class="bi bi-x-circle-fill text-dark"></i>',
-                "CRITICAMENTE_EM_PERIGO": '<i class="bi bi-exclamation-octagon-fill text-danger"></i>',
-                "EM_PERIGO": '<i class="bi bi-exclamation-triangle-fill text-danger"></i>',
-                "VULNERAVEL": '<i class="bi bi-exclamation-circle-fill text-warning"></i>',
-                "QUASE_AMEACADO": '<i class="bi bi-shield-fill-exclamation text-warning"></i>',
-                "POUCO_PREOCUPANTE": '<i class="bi bi-check-circle-fill text-success"></i>',
-                "DADOS_INSUFICIENTES": '<i class="bi bi-question-circle-fill text-secondary"></i>'
-            };
-            const statusIcon = statusIconMap[ser.statusConservacao] || '<i class="bi bi-question-circle-fill text-secondary"></i>';
-
             const col = document.createElement("div");
             col.className = "col";
-
             col.innerHTML = `
                 <div class="card h-100 pinterest-card">
                     <img src="${imagemSrc}" class="card-img-top" alt="Foto de ${ser.nomeComum}"
                          onerror="this.src='assets/images/default.png'">
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">
-                            ${ser.nomeComum} 
-                            <small class="text-muted">(${ser.nomeCientifico})</small>
-                        </h5>
-                        <p class="mb-1">
-                            <i class="bi bi-bookmark-fill text-primary me-1"></i>
-                            ${ser.especie ? ser.especie.nome : "—"}
-                        </p>
-                        <p class="mb-1">
-                            <i class="bi bi-bookmark-fill text-primary me-1"></i>
-                            ${ser.especie ? ser.descricao : "—"}
-                        </p>
-                        <p class="mb-1">
-                            ${statusIcon}
-                            ${statusLabels[ser.statusConservacao] || "—"}
-                        </p>
-                        <p class="mb-1">
-                            <i class="bi bi-person-circle me-1"></i>
-                            ${ser.registradoPor ? ser.registradoPor.login : "—"}
-                        </p>
-                        <p class="mb-2">
-                            <i class="bi bi-geo-alt-fill text-danger me-1"></i> ${locationName}
-                        </p>
-                       <a href="seresDetalhes.html?id=${ser.id}" class="btn btn-sm btn-success mt-auto text-center">
-                            Ver Mais
-                        </a>
+                        <h5 class="card-title">${ser.nomeComum} <small class="text-muted">(${ser.nomeCientifico})</small></h5>
+                        <p class="mb-1"><i class="bi bi-bookmark-fill text-primary me-1"></i>${ser.especie ? ser.especie.nome : "—"}</p>
+                        <p class="mb-1"><i class="bi bi-bookmark-fill text-primary me-1"></i>${ser.descricao || "—"}</p>
+                        <p class="mb-1">${statusIconMap[ser.statusConservacao] || "—"} ${statusLabels[ser.statusConservacao] || "—"}</p>
+                        <p class="mb-1"><i class="bi bi-person-circle me-1"></i>${ser.registradoPor?.login || "—"}</p>
+                        <p class="mb-2"><i class="bi bi-geo-alt-fill text-danger me-1"></i>${locationName}</p>
+                        <a href="seresDetalhes.html?id=${ser.id}" class="btn btn-sm btn-success mt-auto text-center">Ver Mais</a>
                     </div>
                 </div>
             `;
-
             fragment.appendChild(col);
         });
 
-        // Espera todas as promessas de criação de cards
         await Promise.all(cardsPromises);
-
         listaContainer.appendChild(fragment);
 
     } catch (err) {
@@ -320,10 +292,37 @@ async function listarSeres() {
         listaContainer.innerHTML = "<p class='text-danger'>Erro ao carregar seres.</p>";
     }
 }
+// ==========================
+// Menu Hamburger (Mobile)
+// ==========================
+// Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const desktopButtons = document.getElementById("nav-buttons-container");
+  const mobileButtons = document.getElementById("nav-buttons-container-mobile");
 
-// Função "Ver Mais"
-function verMais(serId) {
-    alert(`Ver mais informações do ser com ID: ${serId}`);
-}
+  function openSidebar() {
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+    document.body.classList.add('no-scroll');
+    sidebar.setAttribute('aria-hidden', 'false');
 
-window.addEventListener("DOMContentLoaded", listarSeres);
+    if (desktopButtons && mobileButtons) {
+      mobileButtons.innerHTML = desktopButtons.innerHTML;
+    }
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.classList.remove('no-scroll');
+    sidebar.setAttribute('aria-hidden', 'true');
+  }
+
+  hamburger.addEventListener('click', openSidebar);
+  overlay.addEventListener('click', closeSidebar);
+
+
+document.addEventListener('DOMContentLoaded', inicializarMenuHamburger);
+

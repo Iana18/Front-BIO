@@ -1,108 +1,130 @@
-// Cria o menu do usuário dinamicamente
-async function criarMenuUsuario() {
-    try {
-        // Pega usuário logado
-        const resp = await fetch("http://localhost:8080/api/usuarios/me");
-        if (!resp.ok) throw new Error("Usuário não logado");
-        const usuario = await resp.json();
+window.onload = function() {
+    const navButtonsContainer = document.getElementById("nav-buttons-container");
+    navButtonsContainer.innerHTML = ''; // Limpa o container
 
-        // Cria container do menu
-        const container = document.createElement("div");
-        container.id = "user-menu-container";
-        Object.assign(container.style, {
-            position: "fixed",
-            top: "10px",
-            right: "10px",
-            cursor: "pointer",
-            fontFamily: "Arial, sans-serif",
-            zIndex: 1000
-        });
+    const login = localStorage.getItem("login");
+    const email = localStorage.getItem("email");
 
-        // Ícone + login
-        const btn = document.createElement("div");
-        btn.id = "user-menu-btn";
-        btn.style.display = "flex";
-        btn.style.flexDirection = "column";
-        btn.style.alignItems = "center";
+    if (login && email) {
+        // Usuário logado: cria menu do usuário
+        const userMenu = document.createElement("div");
+        userMenu.className = "user-menu";
+        userMenu.style.position = "relative"; // Para dropdown posicionar corretamente
+        userMenu.style.textAlign = "center";  // Centraliza ícone e login
 
-        const avatar = document.createElement("img");
-        avatar.src = usuario.avatar ? `data:image/jpeg;base64,${usuario.avatar}` : "assets/images/default-avatar.png";
-        Object.assign(avatar.style, {
-            width: "40px",
-            height: "40px",
-            borderRadius: "50%",
-            border: "2px solid #ccc",
-            marginBottom: "5px"
-        });
+userMenu.innerHTML = `
+    <div style="position:relative; display:flex; flex-direction:column; align-items:center;">
+        <!-- Ícone do usuário -->
+        <i class="fas fa-user-circle fa-2x" 
+           style="cursor:pointer; color:#4a90e2; transition: transform 0.2s;" 
+           onclick="toggleUserDropdown()"
+           onmouseover="this.style.transform='scale(1.1)';" 
+           onmouseout="this.style.transform='scale(1)';">
+        </i>
+        <p id="user-login-outside" style="margin:5px 0 0 0; font-weight:600; font-size:0.95rem; color:#333;">${login}</p>
+        
+        <!-- Dropdown moderno -->
+        <div id="user-dropdown" class="user-dropdown" style="
+            display:none;
+            position:absolute;
+            right:0;
+            top:50px;
+            background:#fff;
+            border-radius:12px;
+            padding:12px;
+            box-shadow:0 8px 20px rgba(0,0,0,0.15);
+            z-index:100;
+            min-width:220px;
+            overflow:hidden;
+            transition: all 0.3s ease;
+        ">
+            <p id="user-login-inside" style="margin:0 0 12px 0; font-weight:600; font-size:0.9rem; color:#555; text-align:center;">${login}</p>
+            
+            <button onclick="viewProfile()" style="
+                width:100%;
+                padding:10px;
+                margin-bottom:8px;
+                border:1px solid #ccc;
+                background:#f9f9f9;
+                color:#333;
+                border-radius:8px;
+                font-weight:500;
+                cursor:pointer;
+                transition: all 0.2s;
+            " onmouseover="this.style.background='#eee';" onmouseout="this.style.background='#f9f9f9';">Ver Perfil</button>
+            
+            <button onclick="logout()" style="
+                width:100%;
+                padding:10px;
+                margin-bottom:8px;
+                border:1px solid #ccc;
+                background:#f9f9f9;
+                color:#333;
+                border-radius:8px;
+                font-weight:500;
+                cursor:pointer;
+                transition: all 0.2s;
+            " onmouseover="this.style.background='#eee';" onmouseout="this.style.background='#f9f9f9';">Sair</button>
+            
+            <button onclick="loginAnother()" style="
+                width:100%;
+                padding:10px;
+                border:1px solid #ccc;
+                background:#f9f9f9;
+                color:#333;
+                border-radius:8px;
+                font-weight:500;
+                cursor:pointer;
+                transition: all 0.2s;
+            " onmouseover="this.style.background='#eee';" onmouseout="this.style.background='#f9f9f9';">Entrar com outra conta</button>
+        </div>
+    </div>
+`;
 
-        const login = document.createElement("span");
-        login.textContent = usuario.login;
-        login.style.fontSize = "12px";
 
-        btn.appendChild(avatar);
-        btn.appendChild(login);
-        container.appendChild(btn);
-
-        // Dropdown
-        const dropdown = document.createElement("div");
-        dropdown.id = "user-dropdown";
-        Object.assign(dropdown.style, {
-            display: "none",
-            position: "absolute",
-            top: "50px",
-            right: "0",
-            backgroundColor: "#fff",
-            boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-            borderRadius: "8px",
-            overflow: "hidden",
-            minWidth: "150px"
-        });
-
-        const criarOpcao = (texto, onClick) => {
-            const item = document.createElement("div");
-            item.textContent = texto;
-            Object.assign(item.style, {
-                padding: "10px",
-                cursor: "pointer",
-                borderBottom: "1px solid #eee"
-            });
-            item.addEventListener("mouseenter", () => item.style.backgroundColor = "#f0f0f0");
-            item.addEventListener("mouseleave", () => item.style.backgroundColor = "#fff");
-            item.addEventListener("click", onClick);
-            return item;
-        };
-
-        dropdown.appendChild(criarOpcao("Ver Conta", () => window.location.href = "perfil.html"));
-        dropdown.appendChild(criarOpcao("Trocar Conta", () => window.location.href = "login.html"));
-        dropdown.appendChild(criarOpcao("Sair", () => logout()));
-
-        container.appendChild(dropdown);
-        document.body.appendChild(container);
-
-        // Toggle dropdown
-        btn.addEventListener("click", () => {
-            dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
-        });
-
-        // Fecha dropdown ao clicar fora
-        document.addEventListener("click", (e) => {
-            if (!container.contains(e.target)) dropdown.style.display = "none";
-        });
-
-    } catch (err) {
-        console.error("Menu usuário:", err);
+        navButtonsContainer.appendChild(userMenu);
+    } else {
+        // Usuário não logado: mostra botão Login
+        const loginButton = document.createElement("a");
+        loginButton.href = "login.html";
+        loginButton.className = "btn";
+        loginButton.innerText = "Login";
+        navButtonsContainer.appendChild(loginButton);
     }
+};
+
+// Toggle dropdown do menu do usuário
+function toggleUserDropdown() {
+    const dropdown = document.getElementById("user-dropdown");
+    if (!dropdown) return;
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
 }
 
-// Logout simples
-async function logout() {
-    try {
-        await fetch("http://localhost:8080/api/logout", { method: "POST", credentials: "include" });
-        window.location.href = "login.html";
-    } catch {
-        window.location.href = "login.html";
-    }
+// Ver perfil do usuário
+function viewProfile() {
+      // Redireciona para a página de login
+    window.location.href = "usuarios.html";
 }
 
-// Chama ao carregar a página
-criarMenuUsuario();
+// Logout
+function logout() {
+    localStorage.removeItem("login");
+    localStorage.removeItem("email");
+    alert("Você saiu da conta.");
+    window.location.reload();
+}
+
+// Entrar com outra conta
+function loginAnother() {
+    // Redireciona para a página de login
+    window.location.href = "login.html";
+}
+
+// Fecha dropdown se clicar fora
+document.addEventListener("click", function(event) {
+    const dropdown = document.getElementById("user-dropdown");
+    const icon = document.querySelector(".user-menu i");
+    if (dropdown && icon && !dropdown.contains(event.target) && event.target !== icon) {
+        dropdown.style.display = "none";
+    }
+});

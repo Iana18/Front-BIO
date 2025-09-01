@@ -1,49 +1,58 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Denúncias - Modelo</title>
-    <!-- Fontes e Ícones -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-   
-    <link rel="stylesheet" href="assets/css/index.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plataforma de Denúncias - Modelo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/index.css">
+
 </head>
 <body>
 
-    <!-- Barra de Navegação Principal -->
-    <header class="main-nav">
-        <div class="container flex-container">
-            <div class="logo">
-                <i class="fas fa-paw"></i>
-                <span>BIO-GUINÉ</span>
-            </div>
-            <nav class="main-nav-links">
-                <a href="index.html">Home</a>
-                <a href="cadastro.html">Listas de espécies</a>
-                <a href="denuncia.html">Listas de denúncias</a>
-                <a href="login.html">Login</a>
-            </nav>
-            <div id="nav-buttons-container" class="nav-buttons">
-                <!-- Conteúdo dinâmico inserido pelo script -->
-            </div>
-        </div>
-    </header>
+<!-- Overlay -->
+<div id="overlay" class="overlay"></div>
 
-    <!-- Barra de Utilitários (Topo) -->
-    <div class="top-bar">
-        <div class="container top-bar-links">
-            <a href="#">Blog</a>
-            <a href="#">Notícia</a>
-            <a href="#">Quiz</a>
-            <a href="#">Sobre</a>
-            <a href="#">Contacto</a>
-        </div>
-    </div>
+<header class="main-nav">
+  <div class="container flex-container">
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+    <a href="index.html" class="logo">
+      <img src="assets/img/logo/Logo-Bio.jpg1-removebg-preview.png" alt="Logo Bio">
+      <span>Bio-Guiné</span>
+    </a>
+    <nav class="main-nav-links" id="nav-links">
+      <a href="index.html">Home</a>
+      <a href="cadastro.html">Espécies</a>
+      <a href="denuncia.html">Denúncias</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="contacto.html">Contato</a>
+       <a href="https://observalinguaportuguesa.org/a-guine-bissau-acolhe-cinco-das-sete-especies-de-tartarugas-marinhas-que-existem-no-mundo/#">Blog</a>
     
+    </nav>
+    <div id="nav-buttons-container" class="nav-buttons"></div>
+  </div>
+</header>
+
+<!-- Sidebar móvel -->
+<aside id="sidebar" class="sidebar" aria-hidden="true">
+  <nav>
+    <a href="index.html" onclick="closeSidebar()">Home</a>
+    <a href="cadastro.html" onclick="closeSidebar()">Espécies</a>
+    <a href="denuncia.html" onclick="closeSidebar()">Denúncias</a>
+    <a href="sobre.html" onclick="closeSidebar()">Sobre</a>
+    <a href="contacto.html" onclick="closeSidebar()">Contato</a>
+    
+    <div id="nav-buttons-container-mobile" style="padding:10px;"></div>
+  </nav>
+</aside>
+
+<main>
+
+
+
+
+
     <!-- Conteúdo Principal -->
     <main>
         <!-- Seção Hero (Banner) -->
@@ -51,15 +60,35 @@
             <div class="hero-denuncia-content">
                 <h1>Bio-Guiné</h1>
                 <p>Ajude a conservar a biodiversidade enviando denúncias detalhadas.</p>
-                <a class="fale" href="#">Fale conosco</a>
+                <a class="fale" href="contacto.html">Fale conosco</a>
             </div>
         </section>
         <br><br>
 
+
+        <section id="sobre-nos" class="content-section">
+  <h1>Bem-vindo ao nosso site</h1>
+  <div class="sobre-nos-wrapper">
+    <div class="sobre-nos-texto">
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi porta imperdiet arcu, at suscipit augue egestas sollicitudin. Aliquam et elit erat. Quisque aliquet placerat nisl, a semper sapien gravida in.
+      </p>
+      <p>
+        Nunc non felis aliquet, luctus lacus nec, gravida ipsum. Mauris interdum pulvinar diam, sit amet ultricies ligula condimentum pharetra.
+      </p>
+   <a class="fale" id="mais"  href="sobre.html">Saiba Mais</a>
+    </div>
+    <div class="sobre-nos-imagem">
+      <img src="assets/img/gw-guinea-bissaus-green-development-takes-root-starting-with-biodiversity-conservation-homepage-780x439 (1) - Cópia.jpg" alt="Sobre nós">
+    </div>
+  </div>
+</section>
+
+
         <!-- Seção de Missão -->
         <section id="missao" class="content-section">
             <div class="container">
-                <h1>Ajude na preservação do meio ambiente com simple cliques</h1>
+                <h1>Ajude na preservação do meio ambiente com simples cliques</h1>
                 <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Velit explicabo voluptatem, laudantium,</p>
                 <div class="mission-cards">
                     <div class="mission-card">
@@ -81,33 +110,99 @@
             </div>
         </section>
 
-        <!-- Texto Flutuante -->
-<section class="destaque-especie">
-  <div class="imagem-especie">
-    <img src="assets/img/Tartaruga-verde.jpeg" alt="Tartaruga-cabeçuda">
-  </div>
-  <div class="info-especie">
-    <h2>Tartaruga-verde</h2>
-    <h4><em>Caretta caretta</em></h4>
-    <p><strong>Status:</strong> Ameaçada</p>
-    <p>
-      Esta espécie de tartaruga marinha é conhecida por sua cabeça grande e forte. Habita águas tropicais e subtropicais e está ameaçada devido à pesca predatória, destruição de habitat e poluição marinha.
-    </p>
-   
+            <!-- Seção de Carrocel -->
+      <!-- CARROSSEL DE SERES -->
+<section id="carrossel-seres" class="content-section">
+  <h1>Seres Ameaçados e Vulneráveis</h1>
+  <br><br>
+  <div class="carousel-wrapper">
+    <button class="carousel-btn prev">&lt;</button>
+    <div class="carousel-track" id="carouselEspecies">
+      <!-- Cards serão adicionados via JS -->
+    </div>
+    <button class="carousel-btn next">&gt;</button>
   </div>
 </section>
 
 
 
-    </main>
 
-    <!-- Rodapé -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 Plataforma de Denúncias. Todos os direitos reservados.</p>
-        </div>
-    </footer>
 
-    <script src="assets/page/index.js"></script>
+<!-- Formulário de Feedback -->
+<section class="destaque-especie">
+    <div class="info-especie">
+        <h2>Deixe seu Feedback</h2>
+        <h4><em>Queremos ouvir você!</em></h4>
+
+        <!-- Formulário Web3Forms -->
+        <form action="https://api.web3forms.com/submit" method="POST">
+            <!-- Chave de acesso Web3Forms -->
+            <input type="hidden" name="access_key" value="b8a05d47-8f3d-4c1d-8ac3-6b8f9a377919">
+
+            <!-- Inputs do formulário -->
+            <div class="form-row">
+                <input type="text" name="name" placeholder="Nome" required>
+                 <input type="email" name="email" placeholder="Email"  required>
+                <input type="tel" name="telefone" placeholder="Número de Telemóvel" required>
+            </div>
+            <textarea name="message" placeholder="Mensagem" rows="6" required></textarea>
+
+            <!-- Honeypot para evitar spam -->
+            <input type="checkbox" name="botcheck" style="display:none;">
+
+            <!-- Página de redirecionamento após envio (opcional) -->
+            <input type="hidden" name="_next" value="https://seudominio.co/thanks.html">
+
+            <!-- Botão de envio -->
+            <button type="submit">Enviar Feedback</button>
+        </form>
+
+        <p id="formStatus" style="margin-top:10px;"></p>
+    </div>
+</section>
+
+
+
+
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h3>Contato</h3>
+      <ul>
+        <li><a href="mailto:exemplo@email.com">bioguine@email.com</a></li>
+        <li><a href="tel:+123456789">+245 95 633 48 24</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h3>Links Úteis</h3>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="cadastro.html">Seres</a></li>
+        <li><a href="denuncia.html">Denuncias</a></li>
+      </ul>
+    </div>
+    
+    <div class="footer-section">
+      <h3>Siga-nos</h3>
+     <ul class="social-icons">
+  <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+  <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+  <li><a href="https://wa.me/956334824" target="_blank"><i class="fab fa-whatsapp"></i></a></li>
+</ul>
+
+
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Bio-Guiné. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+
+      <script src="assets/page/usuariospage.js"></script>
+
+
+<script src="assets/page/index.js"></script>
+
 </body>
 </html>

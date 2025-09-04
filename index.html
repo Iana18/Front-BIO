@@ -10,42 +10,34 @@
 
 </head>
 <body>
+<!-- Navbar -->
 
-<!-- Overlay -->
-<div id="overlay" class="overlay"></div>
-
+<!-- Header -->
 <header class="main-nav">
   <div class="container flex-container">
-    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+    <!-- Logo -->
     <a href="index.html" class="logo">
       <img src="assets/img/logo/Logo-Bio.jpg1-removebg-preview.png" alt="Logo Bio">
       <span>Bio-Guiné</span>
     </a>
+
+    <!-- Navegação principal -->
     <nav class="main-nav-links" id="nav-links">
       <a href="index.html">Home</a>
       <a href="cadastro.html">Espécies</a>
       <a href="denuncia.html">Denúncias</a>
       <a href="sobre.html">Sobre</a>
       <a href="contacto.html">Contato</a>
-       <a href="https://observalinguaportuguesa.org/a-guine-bissau-acolhe-cinco-das-sete-especies-de-tartarugas-marinhas-que-existem-no-mundo/#">Blog</a>
-    
+      <a href="#">Blog</a>
     </nav>
-    <div id="nav-buttons-container" class="nav-buttons"></div>
+
+    <!-- Botão do usuário (fora do menu lateral) -->
+    <div id="user-menu"></div>
+
+    <!-- Hamburger -->
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
   </div>
 </header>
-
-<!-- Sidebar móvel -->
-<aside id="sidebar" class="sidebar" aria-hidden="true">
-  <nav>
-    <a href="index.html" onclick="closeSidebar()">Home</a>
-    <a href="cadastro.html" onclick="closeSidebar()">Espécies</a>
-    <a href="denuncia.html" onclick="closeSidebar()">Denúncias</a>
-    <a href="sobre.html" onclick="closeSidebar()">Sobre</a>
-    <a href="contacto.html" onclick="closeSidebar()">Contato</a>
-    
-    <div id="nav-buttons-container-mobile" style="padding:10px;"></div>
-  </nav>
-</aside>
 
 <main>
 
@@ -60,7 +52,7 @@
             <div class="hero-denuncia-content">
                 <h1>Bio-Guiné</h1>
                 <p>Ajude a conservar a biodiversidade enviando denúncias detalhadas.</p>
-                <a class="fale" href="contacto.html">Fale conosco</a>
+                <a class="fale" id="cor" href="contacto.html">Fale conosco</a>
             </div>
         </section>
         <br><br>
@@ -79,7 +71,7 @@
    <a class="fale" id="mais"  href="sobre.html">Saiba Mais</a>
     </div>
     <div class="sobre-nos-imagem">
-      <img src="assets/img/gw-guinea-bissaus-green-development-takes-root-starting-with-biodiversity-conservation-homepage-780x439 (1) - Cópia.jpg" alt="Sobre nós">
+      <img src="assets/img/free-trabalho-em-equipe-illustration-svg-png-download-1785594.webp" alt="Sobre nós">
     </div>
   </div>
 </section>
@@ -198,6 +190,27 @@
   </div>
 </footer>
 
+
+<script>
+ document.addEventListener('DOMContentLoaded', () => {
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('nav-links');
+
+    if (!hamburger || !navLinks) return;
+
+    hamburger.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+        });
+    });
+});
+
+
+</script>
 
       <script src="assets/page/usuariospage.js"></script>
 

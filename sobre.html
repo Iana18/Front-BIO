@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre | Bio Guiné</title>
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-green: #1b5e20;
+      --secondary-green: #388e3c;
+      --light-green: #e8f5e9;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--light-green), #f9fff9);
+      color: #333;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: var(--primary-green);
+    }
+
+    .navbar .nav-link {
+      color: white !important;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .navbar .nav-link:hover {
+      color: #c8e6c9 !important;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+      color: white;
+      padding: 6rem 2rem 4rem;
+      text-align: center;
+      margin-top: 56px;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from {opacity: 0; transform: translateY(-50px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    @keyframes fadeInUp {
+      from {opacity: 0; transform: translateY(50px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 2.5rem;
+      color: var(--primary-green);
+    }
+
+    /* Cards base */
+    .card {
+      border: none;
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+      transform-style: preserve-3d;
+    }
+
+    .card:hover {
+      transform: rotateY(8deg) rotateX(5deg) scale(1.03);
+      box-shadow: 0 20px 35px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Quem Somos */
+    .about-card {
+      max-width: 420px;
+      margin: auto;
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    .about-card img {
+      height: 160px;
+      object-fit: cover;
+      border-bottom: 4px solid var(--secondary-green);
+    }
+
+    /* Equipe */
+    .team-card {
+      max-width: 240px;
+      margin: auto;
+      padding: 1.5rem 1rem;
+      border-radius: 20px;
+    }
+
+    .team-card img {
+      width: 110px;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      display: block;
+      border: 4px solid var(--secondary-green);
+      transition: transform 0.4s ease;
+    }
+
+    .team-card:hover img {
+      transform: scale(1.1);
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+    }
+
+    footer {
+      background: var(--primary-green);
+      color: white;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      margin-top: 3rem;
+    }
+
+    /* Scroll animations */
+    [data-animate] {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.8s ease;
+    }
+
+    [data-animate].visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    [data-animate="left"] { transform: translateX(-50px); }
+    [data-animate="right"] { transform: translateX(50px); }
+    [data-animate="zoom"] { transform: scale(0.8); }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="index.html">Bio Guiné</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="sobre.html">Sobre</a></li>
+          <li class="nav-item"><a class="nav-link" href="#quemsomos">Quem Somos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#equipa">Nossa Equipa</a></li>
+          <li class="nav-item"><a class="nav-link" href="contacto.html">Contacte-nos</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header>
+    <h1>Sobre o Projeto Bio Guiné</h1>
+    <p>Protegendo a biodiversidade e promovendo a sustentabilidade na Guiné-Bissau</p>
+  </header>
+
+  <!-- Quem Somos -->
+  <section id="quemsomos" class="container py-5" data-animate="left">
+    <h2 class="section-title">Quem Somos</h2>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-5">
+        <div class="card about-card shadow">
+          <img src="https://images.unsplash.com/photo-1508780709619-79562169bc64" class="card-img-top" alt="Natureza">
+          <div class="card-body text-center">
+            <h5 class="card-title text-success">Nossa Missão</h5>
+            <p class="card-text">
+              O Bio Guiné nasceu com o objetivo de preservar os recursos naturais, 
+              sensibilizar comunidades locais e implementar projetos que promovam a 
+              sustentabilidade e a conservação da biodiversidade.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="card about-card shadow">
+          <img src="https://images.unsplash.com/photo-1523978591478-c753949ff840" class="card-img-top" alt="Comunidade">
+          <div class="card-body text-center">
+            <h5 class="card-title text-success">Nossa Visão</h5>
+            <p class="card-text">
+              Sonhamos com uma Guiné-Bissau sustentável, onde o desenvolvimento 
+              caminha lado a lado com a proteção ambiental, garantindo qualidade de vida 
+              às futuras gerações e equilíbrio ecológico.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Equipe -->
+  <section id="equipa" class="container py-5" data-animate="zoom">
+    <h2 class="section-title">Nossa Equipa</h2>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-3 col-sm-6">
+        <div class="card team-card text-center shadow">
+          <img src="https://via.placeholder.com/300x300.png?text=Fundador" alt="Membro">
+          <h5 class="card-title">Augusto Té Júnior</h5>
+          <p class="card-text">CEO</p>
+          <div>
+            <a href="#" class="text-success fs-5 mx-2"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="text-success fs-5 mx-2"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="text-success fs-5 mx-2"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6">
+        <div class="card team-card text-center shadow">
+          <img src="https://via.placeholder.com/300x300.png?text=Membro" alt="Membro">
+          <h5 class="card-title">Cromuel Sanca</h5>
+          <p class="card-text">Gestora Ambiental</p>
+          <div>
+            <a href="#" class="text-success fs-5 mx-2"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="text-success fs-5 mx-2"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="text-success fs-5 mx-2"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6">
+        <div class="card team-card text-center shadow">
+          <img src="https://via.placeholder.com/300x300.png?text=Membro" alt="Membro">
+          <h5 class="card-title">Jociliana Sanca</h5>
+          <p class="card-text">Gestora Ambiental</p>
+          <div>
+            <a href="#" class="text-success fs-5 mx-2"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="text-success fs-5 mx-2"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="text-success fs-5 mx-2"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6">
+        <div class="card team-card text-center shadow">
+          <img src="https://via.placeholder.com/300x300.png?text=Membro" alt="Membro">
+          <h5 class="card-title">Júnior Nancassa</h5>
+          <p class="card-text">Gestor Ambiental</p>
+          <div>
+            <a href="#" class="text-success fs-5 mx-2"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="text-success fs-5 mx-2"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="text-success fs-5 mx-2"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Bio Guiné - Todos os direitos reservados</p>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Scroll animation script -->
+  <script>
+    const elements = document.querySelectorAll('[data-animate]');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    elements.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

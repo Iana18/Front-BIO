@@ -27,7 +27,14 @@
     align-items: center;
     justify-content: space-between;
     gap: 20px;
+    position: relative;
 }
+
+/* Ordem padrão no desktop */
+.hamburger { order: 1; }
+.logo { order: 2; margin: 0 auto; }
+.main-nav-links { order: 3; }
+.nav-buttons, #user-menu { order: 4; margin-left: auto; }nav-buttons, #user-menu { order: 4; margin-left: auto; }
 
 .logo {
     display: flex;
@@ -77,7 +84,12 @@
 .hamburger {
     display: none;
     flex-direction: column;
-    gap: 5px;
+    justify-content: center; /* centraliza as barrinhas */
+    align-items: center;
+    gap: 4px;
+    width: 35px;   /* largura fixa */
+    height: 30px;  /* altura fixa */
+    padding: 5px;  /* reduz área clicável */
     background: none;
     border: none;
     cursor: pointer;
@@ -85,39 +97,89 @@
 }
 
 .hamburger span {
-    width: 25px;
-    height: 3px;
+    width: 24px;   /* largura das barrinhas */
+    height: 2.5px; /* espessura menor */
     background-color: var(--cor-verde-escuro);
     border-radius: 2px;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
 }
 
 /* =========================
    Responsividade Navbar
 ========================= */
 @media (max-width: 768px) {
-    .hamburger { display: flex; }
-    .logo { order: 2; }
+    .flex-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .hamburger { 
+        display: flex; 
+        order: 1; /* fica à esquerda */
+    }
+
+    .logo { 
+        order: 2; /* fica no centro */
+        flex: 1;  /* ocupa espaço para centralizar */
+        display: flex;
+        justify-content: center;
+    }
+
+    .nav-buttons, 
+    #user-menu {
+        order: 3; /* fica à direita */
+        position: static; /* remove absolute */
+        margin-left: auto;
+    }
 
     .main-nav-links {
         position: fixed;
         top: 0;
-        left: -250px;
+        left: 0;
         height: 100vh;
-        width: 200px;
-        padding: 60px 20px;
+        width: 70%; /* ocupa parte da tela (drawer lateral) */
+        max-width: 320px;
+        padding: 80px 20px;
         flex-direction: column;
-        gap: 15px;
         background-color: var(--cor-branco);
         box-shadow: 3px 0 15px rgba(0,0,0,0.2);
-        transition: left 0.3s ease;
+        transition: transform 0.3s ease;
+        transform: translateX(-100%); /* escondido */
         z-index: 999;
     }
 
-    .main-nav-links.active { left: 0; }
-    .nav-buttons { display: none; }
+    .main-nav-links.active { 
+        transform: translateX(0); /* aparece suavemente */
+    }
 
-    .mission-cards { flex-direction: column; align-items: center; }
+    /* Links em colunas com divisória */
+    .main-nav-links a {
+        display: block;
+        padding: 15px 0;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--cor-verde-escuro);
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .main-nav-links a:last-child {
+        border-bottom: none;
+    }
+
+    .main-nav-links a:hover {
+        background-color: var(--cor-cinza-claro);
+        color: var(--cor-verde-musgo);
+    }
+
+    .mission-cards { 
+        flex-direction: column; 
+        align-items: center; 
+    }
 }
 
 /* =========================
@@ -136,6 +198,7 @@
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    transition: none;
 }
 
 .hero-denuncia-content {
@@ -156,7 +219,7 @@
     margin: 0 auto 2rem;
 }
 
-/* Botão Fale Conosco */
+/* Botão "Fale conosco" */
 .fale {
     display: inline-block;
     padding: 0.75rem 2rem;
@@ -166,206 +229,168 @@
     background-color: transparent;
     text-decoration: none;
     font-weight: 600;
-    cursor: pointer;
     transition: all 0.3s ease;
+    cursor: pointer;
     animation: flutuar 3s ease-in-out infinite;
 }
 
 .fale:hover {
     background-color: #FFD700;
-    color: #000;
+    color: #000000;
     transform: translateY(-5px);
 }
 
 @keyframes flutuar {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-10px); }
     100% { transform: translateY(0px); }
 }
 
 /* =========================
-   Seções de Conteúdo
-========================= */
-/* =========================
-   Seção Missão
+   🌱 Seção Missão
 ========================= */
 #missao {
-    background-color: #a0d7a431;
-    padding: 4rem 1rem;
-    color: #fff;
-    text-align: center;
+  padding: 4rem 1rem;
+  background-color: #a0d7a431;
+  text-align: center;
 }
 
 #missao h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    color: #000000;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #000;
 }
 
 #missao p {
-    font-size: 1.1rem;
-    margin-bottom: 3rem;
-    color: #000000;
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+  color: #000;
 }
 
-/* Cards de missão */
+/* --- Cards Missão --- */
 .mission-cards {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2rem;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
 }
 
 .mission-card {
-    background: #fff;
-    padding: 2rem 1.5rem;
-    border-radius: 20px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-    max-width: 280px;
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    text-align: center;
+  max-width: 280px;
+  padding: 2rem 1.5rem;
+  background: #fff;
+  border-radius: 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
 .mission-card img {
-    width: 90px;
-    height: 90px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-bottom: 1rem;
-    border: 3px solid #4CAF50; /* destaque verde */
+  width: 90px;
+  height: 90px;
+  margin-bottom: 1rem;
+  border: 3px solid #4CAF50;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .mission-card h3 {
-    font-size: 1.4rem;
-    margin-bottom: 0.8rem;
-    color: #333;
-    transition: color 0.3s;
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+  color: #333;
+  transition: color 0.3s;
 }
 
 .mission-card p {
-    font-size: 0.95rem;
-    color: #555;
-    line-height: 1.5;
-    transition: color 0.3s;
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+  transition: color 0.3s;
 }
 
-/* Card do meio levemente maior */
-.middle-carde {
-    max-width: 300px;
-    margin-top: 30px;
-}
-
-/* ===== Efeitos Hover ===== */
+/* --- Efeitos Hover --- */
 .mission-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
 
 .mission-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(120deg,  #4caf4fe4,#3b833f65);
-    transition: all 0.4s ease-in-out;
-    z-index: 0;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, #4caf4fe4, #3b833f65);
+  transition: all 0.4s ease-in-out;
+  z-index: 0;
 }
 
-.mission-card:hover::before {
-    left: 0;
-}
-
-.mission-card * {
-    position: relative;
-    z-index: 1;
-}
-
+.mission-card:hover::before { left: 0; }
+.mission-card * { position: relative; z-index: 1; }
 .mission-card:hover h3,
-.mission-card:hover p {
-    color: #fff;
-}
+.mission-card:hover p { color: #fff; }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .mission-cards {
-        flex-direction: column;
-        align-items: center;
-        gap: 1.5rem;
-    }
-}
+/* Card do meio maior */
+.middle-carde { max-width: 300px; margin-top: 30px; }
 
-
-/* ====== CARROSSEL DE SERES ====== */
-/* ====== CARROSSEL MULTI-ITEM ====== */
-/* Carrossel geral */
+/* =========================
+   🎠 Carrossel de Seres
+========================= */
 .carousel-wrapper {
   position: relative;
   display: flex;
   align-items: center;
-  overflow: hidden;
   gap: 1rem;
+  overflow: hidden;
 }
 
 .carousel-track {
   display: flex;
   gap: 1rem;
+  padding-bottom: 10px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding-bottom: 10px;
-}
 
-/* Esconde scrollbar no Chrome/Edge/Safari */
-.carousel-track::-webkit-scrollbar {
-  display: none;
-}
-
-/* Esconde scrollbar no Firefox */
-.carousel-track {
   -ms-overflow-style: none; /* IE 10+ */
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;    /* Firefox */
 }
 
-/* Botões do carrossel */
+.carousel-track::-webkit-scrollbar { display: none; }
+
 .carousel-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(56,107,58,0.8);
-  border: none;
-  color: #fff;
-  font-size: 2rem;
   padding: 0.5rem 1rem;
-  cursor: pointer;
-  z-index: 2;
+  border: none;
   border-radius: 8px;
+  font-size: 2rem;
+  color: #fff;
+  cursor: pointer;
+  background-color: rgba(56,107,58,0.8);
+  z-index: 2;
   transition: background-color 0.3s;
 }
 
-.carousel-btn:hover {
-  background-color: rgba(56,107,58,1);
-}
-
+.carousel-btn:hover { background-color: rgba(56,107,58,1); }
 .carousel-btn.prev { left: 0; }
 .carousel-btn.next { right: 0; }
 
-/* Cards estilo Pinterest com altura fixa */
+/* --- Cards Estilo Pinterest --- */
 .pinterest-card {
-  flex: 0 0 400px; /* largura fixa */
-  height: 50%;   /* altura fixa */
- 
+  flex: 0 0 400px;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  background-color: #fff;
+  background: #fff;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
 .pinterest-card:hover {
@@ -375,15 +400,15 @@
 
 .pinterest-card img {
   width: 100%;
-  height: 200px; /* altura fixa para imagem */
+  height: 200px;
   object-fit: cover;
 }
 
 .pinterest-card .card-body {
+  flex-grow: 1;
   padding: 10px 15px;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
 }
 
 .pinterest-card .card-title {
@@ -398,22 +423,35 @@
   flex-grow: 1;
 }
 
-/* Botão Ver Mais estilizado */
+/* --- Botão Ver Mais --- */
 .pinterest-card .btn-ver-mais {
-  background-color: #386b3a;
-  color: #fff;
-  text-align: center;
   padding: 6px 12px;
-  border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 600;
+  color: #fff;
+  text-align: center;
   text-decoration: none;
+  border-radius: 8px;
+  background-color: #386b3a;
   transition: all 0.3s ease;
 }
 
 .pinterest-card .btn-ver-mais:hover {
   background-color: #2e5330;
-  color: #fff;
+}
+/* =========================
+   Variáveis Globais
+========================= */
+:root {
+    --cor-verde-escuro: #2e7d32;
+    --cor-verde-musgo: #4caf50;
+    --cor-branco: #ffffff;
+    --cor-cinza-claro: #f4f4f4;
+    --cor-fundo: #f0f9f5;
+    --cor-texto: #21312a;
+    --cor-primaria: #2e7d32;
+    --cor-secundaria: #4caf50;
+    --cor-destaque: #2e7d32;
 }
 
 /* =========================
@@ -426,165 +464,175 @@
     justify-content: center;
     gap: 40px;
     padding: 40px 20px;
-    background-color: #f0f9f5;
+    background-color: var(--cor-fundo);
     border-radius: 15px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     animation: flutuar 6s ease-in-out infinite;
 }
 
-.imagem-especie { flex: 1 1 400px; text-align: center; }
-.imagem-especie img { width: 100%; max-width: 500px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); object-fit: cover; }
+.imagem-especie { 
+    flex: 1 1 400px; 
+    text-align: center; 
+}
+.imagem-especie img { 
+    width: 100%; 
+    max-width: 200px; 
+    border-radius: 20px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+    object-fit: cover; 
+}
 
-.info-especie { flex: 1 1 400px; max-width: 600px; }
-.info-especie h2 { font-size: 32px; color: var(--cor-verde-escuro); margin-bottom: 5px; }
-.info-especie h4 { font-size: 18px; color: #666; font-style: italic; margin:0 0 10px 0; }
-.info-especie p { margin: 10px 0; line-height: 1.6; color: #444; }
-.info-especie button { margin-top: 15px; background: var(--cor-verde-escuro); color: white; border: none; padding: 10px 25px; border-radius: 25px; cursor: pointer; font-size: 16px; }
+.info-especie { 
+    flex: 1 1 400px; 
+    max-width: 600px; 
+    text-align: left; 
+}
+.info-especie h2 { 
+    font-size: 32px;
+    color: var(--cor-verde-escuro);
+    margin-bottom: 5px;
+    text-align: center;
+}
+.info-especie h4 { 
+    font-size: 18px;
+    color: #666;
+    font-style: italic;
+    margin: 0 0 10px 0;
+    text-align: center;
+}
+.info-especie p { 
+    margin: 10px 0;
+    line-height: 1.6;
+    color: #444;
+}
+.info-especie button { 
+    margin-top: 15px;
+    background: var(--cor-verde-escuro);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+}
 
+/* Formulário na seção destaque */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+    width: 100%;
+}
+.form-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.form-row input,
+textarea {
+    flex: 1 1 100%;
+    min-width: 0;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+textarea { resize: vertical; }
+
+button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--cor-verde-escuro);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+button[type="submit"]:hover {
+    background-color: var(--cor-verde-musgo);
+}
+
+/* Responsividade Destaque */
 @media (max-width: 768px) {
     .destaque-especie { flex-direction: column; padding: 30px 15px; }
     .imagem-especie, .info-especie { flex: 1 1 100%; max-width: 100%; }
-    .info-especie h2 { font-size: 28px; }
-    .info-especie h4 { font-size: 16px; }
-}
-
-/* =========================
-   Footer
-========================= */
-:root {
-    --cor-verde-escuro: #2e7d32;
-    --cor-verde-musgo: #4caf50;
-    --cor-branco: #ffffff;
-    --cor-cinza-claro: #f4f4f4;
+    .form-row { flex-direction: column; }
 }
 
 /* =========================
    Footer
 ========================= */
 .footer {
-  background-color: #386b3a;
-  color: var(--cor-branco);
-  padding: 40px 20px;
-  font-family: Arial, sans-serif;
+    background-color: #386b3a;
+    color: var(--cor-branco);
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
 }
-
 .footer-content {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
-
 .footer-section {
-  flex: 1;
-  margin: 10px;
+    flex: 1;
+    margin: 10px;
 }
-
-.footer-section h3 {
-  margin-bottom: 10px;
-}
-
-.footer-section ul {
-  list-style: none;
-  padding: 0;
-}
-
-.footer-section ul li {
-  margin-bottom: 8px;
-}
-
+.footer-section h3 { margin-bottom: 10px; }
+.footer-section ul { list-style: none; padding: 0; }
+.footer-section ul li { margin-bottom: 8px; }
 .footer-section ul li a {
-  color: var(--cor-branco);
-  text-decoration: none;
+    color: var(--cor-branco);
+    text-decoration: none;
 }
-
-.footer-section ul li a:hover {
-  text-decoration: underline;
-}
-
-.footer-section form {
-  display: flex;
-}
-
+.footer-section ul li a:hover { text-decoration: underline; }
+.footer-section form { display: flex; }
 .footer-section input {
-  padding: 10px;
-  margin-right: 10px;
-  border: none;
-  border-radius: 5px;
-  flex: 1;
+    padding: 10px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+    flex: 1;
 }
-
 .footer-section button {
-  padding: 10px;
-  background-color: var(--cor-verde-musgo);
-  color: var(--cor-branco);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+    padding: 10px;
+    background-color: var(--cor-verde-musgo);
+    color: var(--cor-branco);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
-
-.footer-section button:hover {
-  background-color: var(--cor-verde-escuro);
-}
-
+.footer-section button:hover { background-color: var(--cor-verde-escuro); }
 .social-icons {
-  display: flex;
-  gap: 10px;
-}
-
-.social-icons a {
-  color: var(--cor-branco);
-  text-decoration: none;
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: var(--cor-verde-musgo);
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.social-icons a:hover {
-  background-color: var(--cor-verde-escuro);
-  color: var(--cor-branco);
-}
-
-.footer-bottom {
-  text-align: center;
-  margin-top: 20px;
-}
-/* ======= Footer Responsivo ======= */
-@media (max-width: 768px) {
-  .footer-content {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .footer-section {
-    flex: 1 1 100%;
-    margin: 15px 0;
-  }
-
-  .footer-section form {
-    flex-direction: column;
+    display: flex;
     gap: 10px;
-    width: 100%;
-  }
-
-  .footer-section input {
-    margin: 0 0 10px 0;
-    width: 100%;
-  }
-
-  .social-icons {
-    justify-content: center;
-  }
 }
-
-#mais{
-  color: #000;
+.social-icons a {
+    color: var(--cor-branco);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background-color: var(--cor-verde-musgo);
+    transition: background-color 0.3s, color 0.3s;
+}
+.social-icons a:hover { background-color: var(--cor-verde-escuro); }
+.footer-bottom {
+    text-align: center;
+    margin-top: 20px;
+}
+/* Responsividade Footer */
+@media (max-width: 768px) {
+    .footer-content { flex-direction: column; align-items: center; text-align: center; }
+    .footer-section { flex: 1 1 100%; margin: 15px 0; }
+    .footer-section form { flex-direction: column; gap: 10px; width: 100%; }
+    .footer-section input { margin: 0 0 10px 0; width: 100%; }
+    .social-icons { justify-content: center; }
 }
 
 /* =========================
@@ -592,10 +640,9 @@
 ========================= */
 .user-dropdown {
     position: absolute;
-    top: 32px;
-    right: 0;
+    top: 32px; right: 0;
     background: #fff;
-    color: #21312a;
+    color: var(--cor-texto);
     border: 1px solid #ccc;
     border-radius: 6px;
     display: none;
@@ -603,7 +650,6 @@
     min-width: 180px;
     z-index: 1600;
 }
-
 .user-dropdown button {
     display: block;
     width: 100%;
@@ -615,7 +661,6 @@
     border-radius: 4px;
     cursor: pointer;
 }
-
 .user-dropdown button:hover { background:#40916c; }
 
 /* =========================
@@ -640,7 +685,6 @@
     z-index: 1500; display: flex; flex-direction: column; padding-top: 64px; overflow: auto;
 }
 .sidebar.active { transform: translateX(0); }
-
 .sidebar nav a {
     display: block; padding: 12px 16px; color: #fff; text-decoration: none; font-weight: 600; border-radius: 10px;
 }
@@ -655,235 +699,268 @@
     transition: max-height 0.28s ease;
     margin: 0 6px;
 }
-
 .submenu a { padding-left: 34px; font-weight: 500; font-size: 0.98rem; color: #f2fbf6; }
 
-
-.content-section {
-  padding: 60px 20px;
-  background-color: var(--cor-fundo);
-  color: var(--cor-texto);
+/* Menu responsivo */
+.main-nav-links.active { display: flex; }
+.main-nav-links a {
+    padding: 12px 20px;
+    text-decoration: none;
+    color: var(--cor-verde-musgo);
+    font-weight: 500;
+}
+@media (max-width: 991px) {
+    .main-nav-links a:not(:last-child) { border-bottom: 1px solid #ddd; }
+}
+@media (min-width: 992px) {
+    .main-nav-links {
+        display: flex !important;
+        position: static;
+        flex-direction: row;
+        background: none;
+        box-shadow: none;
+        width: auto;
+        padding: 0;
+    }
+    .main-nav-links a { border: none; padding: 0 15px; }
+    #overlay { display: none !important; }
 }
 
-.sobre-nos-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 40px;
-}
-
-.sobre-nos-texto {
-  flex: 1;
-  max-width: 50%;
-}
-
-.sobre-nos-texto h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: var(--cor-primaria);
-}
-
-.sobre-nos-texto p {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  margin-bottom: 20px;
-  text-align: justify; 
-  text-justify: inter-word;
-}
-  
-
-
-.sobre-nos-texto .btn-saiba-mais {
-  display: inline-block;
-  padding: 12px 24px;
-  background-color: var(--cor-destaque);
-  color: var(--cor-texto);
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-.sobre-nos-texto .btn-saiba-mais:hover {
-  background-color: var(--cor-secundaria);
-}
-
-.sobre-nos-imagem {
-  flex: 1;
-  max-width: 45%;
-}
-
-.sobre-nos-imagem img {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-@media (max-width: 768px) {
-  .sobre-nos-wrapper {
-    flex-direction: column;
-    align-items: center;
-  }
-
-.sobre-nos-texto {
-  flex: 1;
-  max-width: 50%;
-  text-align: justify; 
-  text-justify: inter-word;
-}
-
-  .sobre-nos-imagem {
-    max-width: 80%;
-    margin-top: 20px;
-  }
-}
 /* =========================
-   Seções de Conteúdo - h1
+   Seções de Conteúdo
 ========================= */
-.content-section h1 {
+.content-section {
+    padding: 60px 20px;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+}
+
+
+
+.hero-denuncia h1 {
     font-size: 2.5rem;
     margin-bottom: 2rem;
-    color: #000; /* ou a cor que preferir */
-    text-align: center; /* centraliza todos os h1 das seções */
+    color: #ebe5e5;
+    text-align: center;
 }
 
-/* Seção Missão */
-#missao h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+.sobre-nos-texto h1,#missao h1,.content-section h1{
+font-size: 2.5rem;
+    margin-bottom: 2rem;
     color: #000000;
-    text-align: center; /* garante centralização */
-}
+    text-align: center;
 
-/* Sobre Nós */
-.sobre-nos-texto h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    color: var(--cor-primaria);
-    text-align: center; /* centraliza o título "Bem-vindo ao nosso site" */
 }
-
-/* Hero Denúncia */
-.hero-denuncia h1 {
-    font-size: clamp(2rem, 5vw, 4rem);
-    margin-bottom: 1rem;
-    text-align: center; /* já garante centralização */
-}
-
-/* Destaque Espécie */
-.info-especie h2 {
-    font-size: 32px;
-    color: var(--cor-verde-escuro);
-    margin-bottom: 5px;
-    text-align: center; /* centraliza o h2 da espécie */
-}
-
-.info-especie h4 {
-    font-size: 18px;
-    color: #666;
-    font-style: italic;
-    margin: 0 0 10px 0;
-    text-align: center; /* centraliza subtítulo */
-}
-
-/* Ajuste responsivo h1 */
 @media (max-width: 768px) {
     .content-section h1,
     #missao h1,
     .sobre-nos-texto h1,
-    .hero-denuncia h1 {
-        font-size: 2rem;
+    .hero-denuncia h1 { font-size: 2rem; }
+}
+
+#mais{
+  color: #000;
+}
+
+
+/* =========================
+   Sobre Nós
+========================= */
+.sobre-nos-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+}
+.sobre-nos-texto {
+    flex: 1;
+    max-width: 50%;
+    text-align: justify;
+    text-justify: inter-word;
+}
+.sobre-nos-texto h1 {
+    margin-bottom: 20px;
+    color: var(--cor-primaria);
+}
+.sobre-nos-texto p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+.sobre-nos-texto .btn-saiba-mais {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: var(--cor-destaque);
+    color: var(--cor-texto);
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+.sobre-nos-texto .btn-saiba-mais:hover { background-color: var(--cor-secundaria); }
+
+.sobre-nos-imagem {
+    flex: 1;
+    max-width: 45%;
+}
+.sobre-nos-imagem img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+@media (max-width: 768px) {
+    .sobre-nos-wrapper { flex-direction: column; align-items: center; }
+    .sobre-nos-imagem { max-width: 80%; margin-top: 20px; }
+}
+@media (max-width: 768px) {
+  .fale:hover,
+  .fale:active {
+    background-color: #FFD700;
+    color: #000;
+    transform: translateY(-5px);
+  }
+}
+/* Container do usuário */
+#user-menu {
+    display: flex;
+    position: relative;
+    cursor: pointer;
+}
+
+/* Desktop: botão no final da navbar */
+@media(min-width: 769px) {
+    #user-menu {
+        order: 3; /* garante que fique depois do nav */
     }
 }
 
-/* ======= Formulário na seção destaque ======= */
-.destaque-especie {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-    padding: 40px 20px;
-    background-color: #f0f9f5;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    animation: flutuar 6s ease-in-out infinite;
+/* Mobile: botão no menu centralizado */
+@media(max-width: 768px) {
+    #user-menu {
+        position: static;
+        justify-content: center;
+        width: 100%;
+        margin-top: 20px;
+    }
+}
+/* Cada link */
+.main-nav-links a {
+    padding: 12px 20px;
+    text-decoration: none;
+    color: var(--cor-verde-musgo);
+    font-weight: 500;
 }
 
-.imagem-especie { 
-    flex: 1 1 400px; 
-    text-align: center; 
+/* Linha separadora entre links - somente em telas pequenas */
+@media (max-width: 991px) {
+    .main-nav-links a:not(:last-child) {
+        border-bottom: 1px solid #ddd;
+    }
 }
 
-.imagem-especie img { 
-    width: 100%; 
-    max-width: 200px; 
-    border-radius: 20px; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-    object-fit: cover; 
+/* Overlay ativo */
+#overlay.active {
+    display: block;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 998;
 }
 
-.info-especie { 
-    flex: 1 1 400px; 
-    max-width: 600px; 
-    text-align: left; 
+/* Apenas em telas grandes, mostrar horizontal normalmente */
+@media (min-width: 992px) {
+    .main-nav-links {
+        display: flex !important;
+        position: static;
+        flex-direction: row;
+        background: none;
+        box-shadow: none;
+        width: auto;
+        padding: 0;
+    }
+    .main-nav-links a {
+        border: none; /* remove a linha em telas grandes */
+        padding: 0 15px;
+    }
+    #overlay {
+        display: none !important;
+    }
 }
-
-.info-especie h2, .info-especie h4 { 
-    text-align: center; 
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 15px;
-    width: 100%;
-}
-
-.form-row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap; /* Permite quebrar os inputs em telas pequenas */
-}
-
-.form-row input,
-textarea {
-    flex: 1 1 100%; /* Cada campo ocupa 100% da largura disponível */
-    min-width: 0; /* Evita overflow */
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-    box-sizing: border-box;
-}
-
-textarea { resize: vertical; }
-
-button[type="submit"] {
-    width: 100%;
-    padding: 12px;
-    background-color: var(--cor-verde-escuro);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-button[type="submit"]:hover {
-    background-color: var(--cor-verde-musgo);
-}
-
+/* Modal: fundo escuro */
 /* =========================
-   Responsividade
+   Ajustes extras para telas pequenas
 ========================= */
-@media (max-width: 768px) {
-    .destaque-especie { flex-direction: column; padding: 30px 15px; }
-    .imagem-especie, .info-especie { flex: 1 1 100%; max-width: 100%; }
-    .form-row { flex-direction: column; }
-    .form-row input,
-    textarea { flex: 1 1 100%; }
+@media (max-width: 576px) {
+    /* Navbar compacta */
+    .main-nav {
+        padding: 0.5rem 1rem;
+        margin: 8px;
+    }
+
+    .logo img {
+        height: 32px;
+    }
+
+    .main-nav-links {
+        width: 80%; /* menu ocupa mais espaço em telas muito pequenas */
+    }
+
+    /* Hero: reduz altura */
+    .hero-denuncia {
+        height: 70vh;
+        background-attachment: scroll; /* remove fixo p/ evitar bugs no mobile */
+    }
+
+    .hero-denuncia h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero-denuncia p {
+        font-size: 1rem;
+    }
+
+    /* Botão flutuante menor */
+    .fale {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    /* Formulário */
+    #serForm {
+        padding: 15px;
+    }
+
+    .form-right #map {
+        min-height: 250px; /* reduz mapa em mobile */
+    }
+
+    /* Lista de espécies */
+    .filtro-especies {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .filtro-especies .filtro-input,
+    .filtro-especies .filtro-select,
+    .filtro-especies .btn {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    #listaEspecies .card img,
+    .pinterest-card img {
+        height: 180px; /* imagens menores em cards */
+    }
+
+    /* Footer empilhado */
+    .footer-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .footer-section {
+        margin: 10px 0;
+        text-align: center;
+    }
 }

@@ -1,72 +1,31 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // Hamburger menu
-  const hamburger = document.getElementById('hamburger');
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('overlay');
-  const desktopButtons = document.getElementById("nav-buttons-container");
-  const mobileButtons = document.getElementById("nav-buttons-container-mobile");
 
-  function openSidebar() {
-    sidebar.classList.add('active');
-    overlay.classList.add('active');
-    document.body.classList.add('no-scroll');
-    sidebar.setAttribute('aria-hidden', 'false');
+// ==========================
+// Menu Hamburger (Mobile)
+// ==========================
+function inicializarMenuHamburger() {
+    const hamburger = document.getElementById('hamburger');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
 
-    if (desktopButtons && mobileButtons) {
-      mobileButtons.innerHTML = desktopButtons.innerHTML;
+    if (!hamburger || !sidebar || !overlay) return;
+
+    function openSidebar() {
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+        document.body.classList.add('no-scroll');
+        sidebar.setAttribute('aria-hidden', 'false');
     }
-  }
 
-  function closeSidebar() {
-    sidebar.classList.remove('active');
-    overlay.classList.remove('active');
-    document.body.classList.remove('no-scroll');
-    sidebar.setAttribute('aria-hidden', 'true');
-  }
-
-  hamburger.addEventListener('click', openSidebar);
-  overlay.addEventListener('click', closeSidebar);
-
-  // Login dinâmico
-  const login = localStorage.getItem("login");
-  const email = localStorage.getItem("email");
-  const navButtonsContainer = document.getElementById("nav-buttons-container");
-
-  if (navButtonsContainer) {
-    navButtonsContainer.innerHTML = '';
-
-    if (login && email) {
-      const userMenu = document.createElement("div");
-      userMenu.style.position = "relative";
-
-      userMenu.innerHTML = `
-        <i class="fas fa-user-circle fa-lg" onclick="toggleUserDropdown()" style="cursor:pointer;"></i>
-        <div id="user-dropdown" class="user-dropdown">
-          <p style="margin:0 0 10px 0; font-weight:bold;">${login}</p>
-          <button onclick="viewProfile()">Ver Perfil</button>
-          <button onclick="logout()">Sair</button>
-          <button onclick="loginAnother()">Entrar com outra conta</button>
-        </div>
-      `;
-
-      navButtonsContainer.appendChild(userMenu);
-    } else {
-      const loginButton = document.createElement("a");
-      loginButton.href = "login.html";
-      loginButton.className = "btn";
-      loginButton.innerText = "Entrar";
-
-      navButtonsContainer.appendChild(loginButton);
+    function closeSidebar() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.classList.remove('no-scroll');
+        sidebar.setAttribute('aria-hidden', 'true');
     }
-  }
-});
 
-// Funções do menu usuário
-function toggleUserDropdown() {
-  const dropdown = document.getElementById("user-dropdown");
-  if (!dropdown) return;
-
-  dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    hamburger.addEventListener('click', openSidebar);
+    overlay.addEventListener('click', closeSidebar);
+    sidebar.querySelectorAll('a').forEach(link => link.addEventListener('click', closeSidebar));
 }
 
 
@@ -141,3 +100,4 @@ document.addEventListener('DOMContentLoaded', () => {
   prevBtn.addEventListener("click", () => track.scrollBy({ left: -320, behavior: "smooth" }));
   nextBtn.addEventListener("click", () => track.scrollBy({ left: 320, behavior: "smooth" }));
 });
+
